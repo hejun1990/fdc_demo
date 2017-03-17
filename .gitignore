@@ -1,0 +1,23 @@
+target/
+.classpath
+
+#eclipse Files
+.classpath
+.project
+.settings/
+
+# Package Files #
+*.jar
+*.war
+*.ear
+*.pyc
+
+#忽略class文件
+*.class
+*.classpath
+*.project
+*/generatorConfig.xml
+*.iml
+*.jshintrc
+bin/.gitignore
+.idea/
