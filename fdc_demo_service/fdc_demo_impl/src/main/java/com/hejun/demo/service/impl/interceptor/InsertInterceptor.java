@@ -14,7 +14,6 @@ import java.util.Date;
 
 public class InsertInterceptor {
 
-    @Autowired
     private final static GenIdService genIdService = new GenIdService();
 
     public void before(JoinPoint joinPoint) {
