@@ -31,7 +31,6 @@ public class SimpleMybatisPlugin extends PluginAdapter {
         generate();
     }
 
-
     public boolean sqlMapResultMapWithoutBLOBsElementGenerated(
             XmlElement element, IntrospectedTable introspectedTable) {
         List<IntrospectedColumn> introspectedColumns = introspectedTable.getAllColumns();

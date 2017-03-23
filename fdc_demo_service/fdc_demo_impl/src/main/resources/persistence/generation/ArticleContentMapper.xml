@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hejun.demo.service.inter.dao.generation.ArticleContentMapper" >
+  <resultMap id="BaseResultMap" type="com.hejun.demo.service.inter.domain.generation.ArticleContent" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="article_id" property="articleId" jdbcType="VARCHAR" />
+    <result column="digest" property="digest" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.hejun.demo.service.inter.domain.generation.ArticleContent" extends="BaseResultMap" >
+    <result column="content" property="content" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <trim prefix="(" suffix=")" prefixOverrides="and" >
+        
+        <foreach collection="oredCriteria" item="criteria" separator="or" >
+          <if test="criteria.valid" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </if>
+        </foreach>
+      </trim>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <trim prefix="(" suffix=")" prefixOverrides="and" >
+        
+        <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+          <if test="criteria.valid" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </if>
+        </foreach>
+      </trim>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, article_id, digest
+  </sql>
+  <sql id="Blob_Column_List" >
+    content
+  </sql>
+  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="com.hejun.demo.service.inter.domain.generation.ArticleContentExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from article_content
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="forUpdate" >
+      for update
+    </if>
+  </select>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.hejun.demo.service.inter.domain.generation.ArticleContentExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <if test="!definedQueryColumns" >
+      <include refid="Base_Column_List" />
+    </if>
+    <if test="definedQueryColumns" >
+      <foreach collection="queryColumns" item="queryColumn" separator="," >
+        ${queryColumn}
+      </foreach>
+    </if>
+    from article_content
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="forUpdate" >
+      for update
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from article_content
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from article_content
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.hejun.demo.service.inter.domain.generation.ArticleContentExample" >
+    delete from article_content
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.hejun.demo.service.inter.domain.generation.ArticleContent" useGeneratedKeys="true" keyProperty="id" >
+    insert into article_content (id, article_id, digest, 
+      content)
+    values (#{id,jdbcType=VARCHAR}, #{articleId,jdbcType=VARCHAR}, #{digest,jdbcType=VARCHAR}, 
+      #{content,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.hejun.demo.service.inter.domain.generation.ArticleContent" useGeneratedKeys="true" keyProperty="id" >
+    insert into article_content
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="articleId != null" >
+        article_id,
+      </if>
+      <if test="digest != null" >
+        digest,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="articleId != null" >
+        #{articleId,jdbcType=VARCHAR},
+      </if>
+      <if test="digest != null" >
+        #{digest,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.hejun.demo.service.inter.domain.generation.ArticleContentExample" resultType="java.lang.Integer" >
+    select count(*) from article_content
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update article_content
+    <set >
+      <trim suffixOverrides="," >
+        <if test="record.articleId!=null and record.articleIdExpression==null" >
+          article_id = #{record.articleId,jdbcType=VARCHAR},
+        </if>
+        <if test="record.articleIdExpression!=null" >
+          article_id = ${record.articleIdExpression},
+        </if>
+        <if test="record.digest!=null and record.digestExpression==null" >
+          digest = #{record.digest,jdbcType=VARCHAR},
+        </if>
+        <if test="record.digestExpression!=null" >
+          digest = ${record.digestExpression},
+        </if>
+      </trim>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map" >
+    update article_content
+    set id = #{record.id,jdbcType=VARCHAR},
+      article_id = #{record.articleId,jdbcType=VARCHAR},
+      digest = #{record.digest,jdbcType=VARCHAR},
+      content = #{record.content,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update article_content
+    set id = #{record.id,jdbcType=VARCHAR},
+      article_id = #{record.articleId,jdbcType=VARCHAR},
+      digest = #{record.digest,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.hejun.demo.service.inter.domain.generation.ArticleContent" >
+    update article_content
+    <set >
+      <trim suffixOverrides="," >
+        <if test="record.articleId!=null and record.articleIdExpression==null" >
+          article_id = #{record.articleId,jdbcType=VARCHAR},
+        </if>
+        <if test="record.articleIdExpression!=null" >
+          article_id = ${record.articleIdExpression},
+        </if>
+        <if test="record.digest!=null and record.digestExpression==null" >
+          digest = #{record.digest,jdbcType=VARCHAR},
+        </if>
+        <if test="record.digestExpression!=null" >
+          digest = ${record.digestExpression},
+        </if>
+      </trim>
+    </set>
+    where id = #{record.id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.hejun.demo.service.inter.domain.generation.ArticleContent" >
+    update article_content
+    set article_id = #{articleId,jdbcType=VARCHAR},
+      digest = #{digest,jdbcType=VARCHAR},
+      content = #{content,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.hejun.demo.service.inter.domain.generation.ArticleContent" >
+    update article_content
+    set article_id = #{articleId,jdbcType=VARCHAR},
+      digest = #{digest,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

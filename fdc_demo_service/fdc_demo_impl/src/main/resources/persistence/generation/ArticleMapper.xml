@@ -1,0 +1,444 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hejun.demo.service.inter.dao.generation.ArticleMapper" >
+  <resultMap id="BaseResultMap" type="com.hejun.demo.service.inter.domain.generation.Article" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="gmt_created" property="gmtCreated" jdbcType="TIMESTAMP" />
+    <result column="gmt_modified" property="gmtModified" jdbcType="TIMESTAMP" />
+    <result column="created_by" property="createdBy" jdbcType="VARCHAR" />
+    <result column="modified_by" property="modifiedBy" jdbcType="VARCHAR" />
+    <result column="article_type" property="articleType" jdbcType="TINYINT" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="short_title" property="shortTitle" jdbcType="VARCHAR" />
+    <result column="author" property="author" jdbcType="VARCHAR" />
+    <result column="label_description" property="labelDescription" jdbcType="VARCHAR" />
+    <result column="key_words" property="keyWords" jdbcType="VARCHAR" />
+    <result column="original_site" property="originalSite" jdbcType="VARCHAR" />
+    <result column="original_url" property="originalUrl" jdbcType="VARCHAR" />
+    <result column="is_del" property="isDel" jdbcType="BIT" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <trim prefix="(" suffix=")" prefixOverrides="and" >
+        
+        <foreach collection="oredCriteria" item="criteria" separator="or" >
+          <if test="criteria.valid" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </if>
+        </foreach>
+      </trim>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <trim prefix="(" suffix=")" prefixOverrides="and" >
+        
+        <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+          <if test="criteria.valid" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </if>
+        </foreach>
+      </trim>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, gmt_created, gmt_modified, created_by, modified_by, article_type, title, short_title, 
+    author, label_description, key_words, original_site, original_url, is_del
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.hejun.demo.service.inter.domain.generation.ArticleExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <if test="!definedQueryColumns" >
+      <include refid="Base_Column_List" />
+    </if>
+    <if test="definedQueryColumns" >
+      <foreach collection="queryColumns" item="queryColumn" separator="," >
+        ${queryColumn}
+      </foreach>
+    </if>
+    from article
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="forUpdate" >
+      for update
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from article
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from article
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.hejun.demo.service.inter.domain.generation.ArticleExample" >
+    delete from article
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.hejun.demo.service.inter.domain.generation.Article" useGeneratedKeys="true" keyProperty="id" >
+    insert into article (id, gmt_created, gmt_modified, 
+      created_by, modified_by, article_type, 
+      title, short_title, author, 
+      label_description, key_words, original_site, 
+      original_url, is_del)
+    values (#{id,jdbcType=VARCHAR}, #{gmtCreated,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, 
+      #{createdBy,jdbcType=VARCHAR}, #{modifiedBy,jdbcType=VARCHAR}, #{articleType,jdbcType=TINYINT}, 
+      #{title,jdbcType=VARCHAR}, #{shortTitle,jdbcType=VARCHAR}, #{author,jdbcType=VARCHAR}, 
+      #{labelDescription,jdbcType=VARCHAR}, #{keyWords,jdbcType=VARCHAR}, #{originalSite,jdbcType=VARCHAR}, 
+      #{originalUrl,jdbcType=VARCHAR}, #{isDel,jdbcType=BIT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.hejun.demo.service.inter.domain.generation.Article" useGeneratedKeys="true" keyProperty="id" >
+    insert into article
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="gmtCreated != null" >
+        gmt_created,
+      </if>
+      <if test="gmtModified != null" >
+        gmt_modified,
+      </if>
+      <if test="createdBy != null" >
+        created_by,
+      </if>
+      <if test="modifiedBy != null" >
+        modified_by,
+      </if>
+      <if test="articleType != null" >
+        article_type,
+      </if>
+      <if test="title != null" >
+        title,
+      </if>
+      <if test="shortTitle != null" >
+        short_title,
+      </if>
+      <if test="author != null" >
+        author,
+      </if>
+      <if test="labelDescription != null" >
+        label_description,
+      </if>
+      <if test="keyWords != null" >
+        key_words,
+      </if>
+      <if test="originalSite != null" >
+        original_site,
+      </if>
+      <if test="originalUrl != null" >
+        original_url,
+      </if>
+      <if test="isDel != null" >
+        is_del,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="gmtCreated != null" >
+        #{gmtCreated,jdbcType=TIMESTAMP},
+      </if>
+      <if test="gmtModified != null" >
+        #{gmtModified,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createdBy != null" >
+        #{createdBy,jdbcType=VARCHAR},
+      </if>
+      <if test="modifiedBy != null" >
+        #{modifiedBy,jdbcType=VARCHAR},
+      </if>
+      <if test="articleType != null" >
+        #{articleType,jdbcType=TINYINT},
+      </if>
+      <if test="title != null" >
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="shortTitle != null" >
+        #{shortTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="author != null" >
+        #{author,jdbcType=VARCHAR},
+      </if>
+      <if test="labelDescription != null" >
+        #{labelDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="keyWords != null" >
+        #{keyWords,jdbcType=VARCHAR},
+      </if>
+      <if test="originalSite != null" >
+        #{originalSite,jdbcType=VARCHAR},
+      </if>
+      <if test="originalUrl != null" >
+        #{originalUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="isDel != null" >
+        #{isDel,jdbcType=BIT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.hejun.demo.service.inter.domain.generation.ArticleExample" resultType="java.lang.Integer" >
+    select count(*) from article
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update article
+    <set >
+      <trim suffixOverrides="," >
+        <if test="record.gmtCreated!=null and record.gmtCreatedExpression==null" >
+          gmt_created = #{record.gmtCreated,jdbcType=TIMESTAMP},
+        </if>
+        <if test="record.gmtCreatedExpression!=null" >
+          gmt_created = ${record.gmtCreatedExpression},
+        </if>
+        <if test="record.gmtModified!=null and record.gmtModifiedExpression==null" >
+          gmt_modified = #{record.gmtModified,jdbcType=TIMESTAMP},
+        </if>
+        <if test="record.gmtModifiedExpression!=null" >
+          gmt_modified = ${record.gmtModifiedExpression},
+        </if>
+        <if test="record.createdBy!=null and record.createdByExpression==null" >
+          created_by = #{record.createdBy,jdbcType=VARCHAR},
+        </if>
+        <if test="record.createdByExpression!=null" >
+          created_by = ${record.createdByExpression},
+        </if>
+        <if test="record.modifiedBy!=null and record.modifiedByExpression==null" >
+          modified_by = #{record.modifiedBy,jdbcType=VARCHAR},
+        </if>
+        <if test="record.modifiedByExpression!=null" >
+          modified_by = ${record.modifiedByExpression},
+        </if>
+        <if test="record.articleType!=null and record.articleTypeExpression==null" >
+          article_type = #{record.articleType,jdbcType=TINYINT},
+        </if>
+        <if test="record.articleTypeExpression!=null" >
+          article_type = ${record.articleTypeExpression},
+        </if>
+        <if test="record.title!=null and record.titleExpression==null" >
+          title = #{record.title,jdbcType=VARCHAR},
+        </if>
+        <if test="record.titleExpression!=null" >
+          title = ${record.titleExpression},
+        </if>
+        <if test="record.shortTitle!=null and record.shortTitleExpression==null" >
+          short_title = #{record.shortTitle,jdbcType=VARCHAR},
+        </if>
+        <if test="record.shortTitleExpression!=null" >
+          short_title = ${record.shortTitleExpression},
+        </if>
+        <if test="record.author!=null and record.authorExpression==null" >
+          author = #{record.author,jdbcType=VARCHAR},
+        </if>
+        <if test="record.authorExpression!=null" >
+          author = ${record.authorExpression},
+        </if>
+        <if test="record.labelDescription!=null and record.labelDescriptionExpression==null" >
+          label_description = #{record.labelDescription,jdbcType=VARCHAR},
+        </if>
+        <if test="record.labelDescriptionExpression!=null" >
+          label_description = ${record.labelDescriptionExpression},
+        </if>
+        <if test="record.keyWords!=null and record.keyWordsExpression==null" >
+          key_words = #{record.keyWords,jdbcType=VARCHAR},
+        </if>
+        <if test="record.keyWordsExpression!=null" >
+          key_words = ${record.keyWordsExpression},
+        </if>
+        <if test="record.originalSite!=null and record.originalSiteExpression==null" >
+          original_site = #{record.originalSite,jdbcType=VARCHAR},
+        </if>
+        <if test="record.originalSiteExpression!=null" >
+          original_site = ${record.originalSiteExpression},
+        </if>
+        <if test="record.originalUrl!=null and record.originalUrlExpression==null" >
+          original_url = #{record.originalUrl,jdbcType=VARCHAR},
+        </if>
+        <if test="record.originalUrlExpression!=null" >
+          original_url = ${record.originalUrlExpression},
+        </if>
+        <if test="record.isDel!=null and record.isDelExpression==null" >
+          is_del = #{record.isDel,jdbcType=BIT},
+        </if>
+        <if test="record.isDelExpression!=null" >
+          is_del = ${record.isDelExpression},
+        </if>
+      </trim>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update article
+    set id = #{record.id,jdbcType=VARCHAR},
+      gmt_created = #{record.gmtCreated,jdbcType=TIMESTAMP},
+      gmt_modified = #{record.gmtModified,jdbcType=TIMESTAMP},
+      created_by = #{record.createdBy,jdbcType=VARCHAR},
+      modified_by = #{record.modifiedBy,jdbcType=VARCHAR},
+      article_type = #{record.articleType,jdbcType=TINYINT},
+      title = #{record.title,jdbcType=VARCHAR},
+      short_title = #{record.shortTitle,jdbcType=VARCHAR},
+      author = #{record.author,jdbcType=VARCHAR},
+      label_description = #{record.labelDescription,jdbcType=VARCHAR},
+      key_words = #{record.keyWords,jdbcType=VARCHAR},
+      original_site = #{record.originalSite,jdbcType=VARCHAR},
+      original_url = #{record.originalUrl,jdbcType=VARCHAR},
+      is_del = #{record.isDel,jdbcType=BIT}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.hejun.demo.service.inter.domain.generation.Article" >
+    update article
+    <set >
+      <trim suffixOverrides="," >
+        <if test="record.gmtCreated!=null and record.gmtCreatedExpression==null" >
+          gmt_created = #{record.gmtCreated,jdbcType=TIMESTAMP},
+        </if>
+        <if test="record.gmtCreatedExpression!=null" >
+          gmt_created = ${record.gmtCreatedExpression},
+        </if>
+        <if test="record.gmtModified!=null and record.gmtModifiedExpression==null" >
+          gmt_modified = #{record.gmtModified,jdbcType=TIMESTAMP},
+        </if>
+        <if test="record.gmtModifiedExpression!=null" >
+          gmt_modified = ${record.gmtModifiedExpression},
+        </if>
+        <if test="record.createdBy!=null and record.createdByExpression==null" >
+          created_by = #{record.createdBy,jdbcType=VARCHAR},
+        </if>
+        <if test="record.createdByExpression!=null" >
+          created_by = ${record.createdByExpression},
+        </if>
+        <if test="record.modifiedBy!=null and record.modifiedByExpression==null" >
+          modified_by = #{record.modifiedBy,jdbcType=VARCHAR},
+        </if>
+        <if test="record.modifiedByExpression!=null" >
+          modified_by = ${record.modifiedByExpression},
+        </if>
+        <if test="record.articleType!=null and record.articleTypeExpression==null" >
+          article_type = #{record.articleType,jdbcType=TINYINT},
+        </if>
+        <if test="record.articleTypeExpression!=null" >
+          article_type = ${record.articleTypeExpression},
+        </if>
+        <if test="record.title!=null and record.titleExpression==null" >
+          title = #{record.title,jdbcType=VARCHAR},
+        </if>
+        <if test="record.titleExpression!=null" >
+          title = ${record.titleExpression},
+        </if>
+        <if test="record.shortTitle!=null and record.shortTitleExpression==null" >
+          short_title = #{record.shortTitle,jdbcType=VARCHAR},
+        </if>
+        <if test="record.shortTitleExpression!=null" >
+          short_title = ${record.shortTitleExpression},
+        </if>
+        <if test="record.author!=null and record.authorExpression==null" >
+          author = #{record.author,jdbcType=VARCHAR},
+        </if>
+        <if test="record.authorExpression!=null" >
+          author = ${record.authorExpression},
+        </if>
+        <if test="record.labelDescription!=null and record.labelDescriptionExpression==null" >
+          label_description = #{record.labelDescription,jdbcType=VARCHAR},
+        </if>
+        <if test="record.labelDescriptionExpression!=null" >
+          label_description = ${record.labelDescriptionExpression},
+        </if>
+        <if test="record.keyWords!=null and record.keyWordsExpression==null" >
+          key_words = #{record.keyWords,jdbcType=VARCHAR},
+        </if>
+        <if test="record.keyWordsExpression!=null" >
+          key_words = ${record.keyWordsExpression},
+        </if>
+        <if test="record.originalSite!=null and record.originalSiteExpression==null" >
+          original_site = #{record.originalSite,jdbcType=VARCHAR},
+        </if>
+        <if test="record.originalSiteExpression!=null" >
+          original_site = ${record.originalSiteExpression},
+        </if>
+        <if test="record.originalUrl!=null and record.originalUrlExpression==null" >
+          original_url = #{record.originalUrl,jdbcType=VARCHAR},
+        </if>
+        <if test="record.originalUrlExpression!=null" >
+          original_url = ${record.originalUrlExpression},
+        </if>
+        <if test="record.isDel!=null and record.isDelExpression==null" >
+          is_del = #{record.isDel,jdbcType=BIT},
+        </if>
+        <if test="record.isDelExpression!=null" >
+          is_del = ${record.isDelExpression},
+        </if>
+      </trim>
+    </set>
+    where id = #{record.id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.hejun.demo.service.inter.domain.generation.Article" >
+    update article
+    set gmt_created = #{gmtCreated,jdbcType=TIMESTAMP},
+      gmt_modified = #{gmtModified,jdbcType=TIMESTAMP},
+      created_by = #{createdBy,jdbcType=VARCHAR},
+      modified_by = #{modifiedBy,jdbcType=VARCHAR},
+      article_type = #{articleType,jdbcType=TINYINT},
+      title = #{title,jdbcType=VARCHAR},
+      short_title = #{shortTitle,jdbcType=VARCHAR},
+      author = #{author,jdbcType=VARCHAR},
+      label_description = #{labelDescription,jdbcType=VARCHAR},
+      key_words = #{keyWords,jdbcType=VARCHAR},
+      original_site = #{originalSite,jdbcType=VARCHAR},
+      original_url = #{originalUrl,jdbcType=VARCHAR},
+      is_del = #{isDel,jdbcType=BIT}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>
