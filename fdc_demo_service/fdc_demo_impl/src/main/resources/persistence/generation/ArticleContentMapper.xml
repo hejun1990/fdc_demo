@@ -195,6 +195,12 @@
         <if test="record.digestExpression!=null" >
           digest = ${record.digestExpression},
         </if>
+        <if test="record.content!=null and record.contentExpression==null" >
+          content = #{record.content},
+        </if>
+        <if test="record.contentExpression!=null" >
+          content = ${record.contentExpression},
+        </if>
       </trim>
     </set>
     <if test="_parameter != null" >
@@ -235,6 +241,12 @@
         </if>
         <if test="record.digestExpression!=null" >
           digest = ${record.digestExpression},
+        </if>
+        <if test="record.content!=null and record.contentExpression==null" >
+          content = #{record.content},
+        </if>
+        <if test="record.contentExpression!=null" >
+          content = ${record.contentExpression},
         </if>
       </trim>
     </set>
