@@ -100,21 +100,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>dubbo</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.zookeeper</groupId>
-            <artifactId>zookeeper</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.101tec</groupId>
-            <artifactId>zkclient</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
         </dependency>
@@ -133,13 +118,18 @@
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.fdc.platform.common.yfutil</groupId>
+            <artifactId>yfutil</artifactId>
+        </dependency>
     </dependencies>
 
     <profiles>
         <profile>
-            <id>local</id>
+            <id>dev</id>
             <properties>
-                <profiles.active>local</profiles.active>
+                <profiles.active>dev</profiles.active>
             </properties>
             <activation>
                 <activeByDefault>true</activeByDefault>
@@ -147,15 +137,25 @@
         </profile>
 
         <profile>
-            <id>dev</id>
+            <id>product</id>
             <properties>
-                <profiles.active>dev</profiles.active>
+                <profiles.active>product</profiles.active>
             </properties>
         </profile>
     </profiles>
 
     <build>
         <finalName>fecdemoweb</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+        </plugins>
         <resources>
             <resource>
                 <directory>src/main/java</directory>
