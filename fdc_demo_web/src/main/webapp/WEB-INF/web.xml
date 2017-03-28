@@ -4,13 +4,19 @@
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
          version="3.1">
 
+    <!-- 指定Spring上下文侦听加载器加载配置文件路径 -->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath:applicationContext.xml</param-value>
+    </context-param>
+
     <listener>
         <description>Spring上下文侦听加载器</description>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
 
     <servlet>
-        <description>核心Servlet</description>
+        <description>核心Servlet 前置控制器</description>
         <servlet-name>springMVC</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
         <init-param>
