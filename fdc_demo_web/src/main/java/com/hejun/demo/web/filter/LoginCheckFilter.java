@@ -33,7 +33,7 @@ public class LoginCheckFilter implements Filter {
             boolean checkCharactorFlag = true;
             StringBuilder new_param_sb = new StringBuilder();
             while (params_enum.hasMoreElements()) {
-                String thisParamName = (String) params_enum.nextElement();
+                String thisParamName = params_enum.nextElement();
                 String thisParamValue = servletRequest.getParameter(thisParamName);
                 if (StringUtils.isNotEmpty(thisParamName)) {
                     if (thisParamName.indexOf("<") > -1 || thisParamName.indexOf(">") > -1) {
@@ -63,10 +63,19 @@ public class LoginCheckFilter implements Filter {
 
         HttpSession session = httpRequest.getSession();
         // 静态文件引用的服务器地址（项目中的css和js文件）
-        String static_server_url = PropertyReader.getValue("static_server_url");
-        if (StringUtils.isNotEmpty(static_server_url)) {
-            session.setAttribute("static_server_url", static_server_url);
+        if(session.getAttribute("static_server_url") == null) {
+            String static_server_url = PropertyReader.getValue("static_server_url");
+            if (StringUtils.isNotEmpty(static_server_url)) {
+                session.setAttribute("static_server_url", static_server_url);
+            }
         }
+        if(session.getAttribute("web_project") == null) {
+            String web_project = PropertyReader.getValue("web_project");
+            if (StringUtils.isNotEmpty(web_project)) {
+                session.setAttribute("web_project", web_project);
+            }
+        }
+
         filterChain.doFilter(servletRequest, servletResponse);
     }
 
