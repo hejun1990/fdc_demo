@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+    <meta charset="UTF-8">
+    <title>添加新闻</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+</head>
+<body>
+<div id="addArticleForm">
+    <div>
+        类型：
+        <input type="radio" name="article_type" value="1" v-model="articleType" checked>社会
+        <input type="radio" name="article_type" value="2" v-model="articleType">国际
+        <input type="radio" name="article_type" value="3" v-model="articleType">体育
+        <input type="radio" name="article_type" value="4" v-model="articleType">科技
+    </div>
+    <div>
+        标题：<input type="text" minlength="2" maxlength="200" required v-model="title">
+    </div>
+    <div>
+        作者：<input type="text" minlength="2" maxlength="100" required v-model="author">
+    </div>
+    <div>
+        标签描述：<input type="text" minlength="2" maxlength="100" required v-model="labelDescription">
+    </div>
+    <div>
+        关键字：<input type="text" minlength="2" maxlength="100" required v-model="keyWords">
+    </div>
+    <div>
+        摘要：<textarea placeholder="摘要..." rows="3" cols="20" maxlength="500" required v-model="digest"></textarea>
+    </div>
+    <div>
+        内容：<textarea placeholder="内容..." rows="3" cols="20" maxlength="1000" required v-model="content"></textarea>
+    </div>
+    <div>
+        <input type="button" value="提交" @click="submitArticle">
+    </div>
+</div>
+</body>
+
+<script src="js/jquery/jquery-3.2.0.min.js"></script>
+<script src="js/vuejs/vue.min.js"></script>
+<script src="js/params.js"></script>
+<script src="js/fdc/article/addarticle.js"></script>
+</html>

@@ -12,18 +12,6 @@
 <div>
     <h1>$!{content}</h1>
 </div>
-<div>
-    <div id="myView"></div>
-</div>
-
-<script src="js/jquery/jquery-3.2.0.min.js"></script>
-<script>
-    function initView() {
-        $.getJSON("/$!{web_project}/getView", {id : 1}, function(result){
-            $("#myView").text(result.view + ", " + result.id);
-        });
-    }
-    initView();
-</script>
 </body>
+<script src="js/jquery/jquery-3.2.0.min.js"></script>
 </html>

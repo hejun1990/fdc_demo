@@ -23,7 +23,6 @@
             $("#myView").text(result.view + ", " + result.id);
         });
     }
-    initView();
 </script>
 </body>
 </html>

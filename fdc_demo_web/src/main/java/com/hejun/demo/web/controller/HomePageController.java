@@ -1,13 +1,12 @@
 package com.hejun.demo.web.controller;
 
-import org.apache.commons.collections.map.HashedMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.hejun.demo.service.inter.domain.generation.Article;
+import com.hejun.demo.web.bussiness.ArticleBussiness;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.HashMap;
@@ -18,29 +17,43 @@ import java.util.Map;
  */
 @Controller
 public class HomePageController {
-    private Logger logger = LoggerFactory.getLogger(HomePageController.class);
+//    private Logger logger = LoggerFactory.getLogger(HomePageController.class);
 
+    @Autowired
+    private ArticleBussiness articleBussiness;
+
+    /**
+     * 首页
+     * @param modelMap
+     * @return
+     */
     @RequestMapping(value = "/home", method = RequestMethod.GET)
     public String home(ModelMap modelMap) {
         modelMap.put("content", "Hello My Friend");
         return "home";
     }
 
-    @RequestMapping(value = "/getView")
-    public
-    @ResponseBody
-    Map<String, Object> getView(@RequestParam(value = "id", required = false) int id) {
-        logger.info("id = {}", id);
-        id++;
-        Map<String, Object> map = new HashMap<>();
-        map.put("id", id);
-        map.put("view", "This is My View");
-        return map;
+    /**
+     * 进入添加文章页面
+     * @return
+     */
+    @RequestMapping(value = "/toaddarticle", method = RequestMethod.GET)
+    public String toAddArticle() {
+        return "/article/addArticle";
     }
 
-    @RequestMapping(value = "/error404", method = RequestMethod.GET)
-    public String error404(ModelMap modelMap) {
-        modelMap.put("headerName", "error");
-        return "error404";
+    /**
+     * 添加文章
+     * @param article
+     * @return
+     */
+    @RequestMapping(value = "/addarticle")
+    public
+    @ResponseBody
+    Map<String, Object> addArticle(Article article) {
+        Map<String, Object> result = new HashMap<>();
+        boolean data = articleBussiness.addArticle(article);
+        result.put("data", data);
+        return result;
     }
 }
