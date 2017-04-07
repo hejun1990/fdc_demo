@@ -1,11 +1,8 @@
-﻿target/
-.classpath
+﻿#忽略的目录
+target/
 out/
-
-#eclipse Files
-.classpath
-.project
-.settings/
+.idea/
+bin/
 
 # Package Files #
 *.jar
@@ -13,12 +10,9 @@ out/
 *.ear
 *.pyc
 
-#忽略class文件
+#忽略的文件
 *.class
 *.classpath
 *.project
-*/generatorConfig.xml
 *.iml
 *.jshintrc
-bin/.gitignore
-.idea/
