@@ -23,4 +23,6 @@
     </bean>
 
     <bean id="loginCheckFilter" class="com.hejun.demo.web.filter.LoginCheckFilter"></bean>
+
+    <import resource="dubbo-consumer.xml"/>
 </beans>

@@ -1,6 +1,7 @@
 package com.hejun.demo.service.inter.domain.generation;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fdc.platform.common.validator.annotation.BizId;
 import com.fdc.platform.common.validator.annotation.Domain;
 import java.io.Serializable;
 import java.util.Date;
@@ -12,6 +13,7 @@ import lombok.ToString;
 @ToString
 public class Article implements Serializable {
     /** 主键 */
+    @BizId
     private String id;
 
     /** 创建时间 */

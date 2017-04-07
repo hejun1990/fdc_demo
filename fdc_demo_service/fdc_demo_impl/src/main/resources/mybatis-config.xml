@@ -21,7 +21,7 @@
         <setting name="callSettersOnNulls" value="true" />
     </settings>
     <typeAliases>
-        <package name="com.fdc.home.nh.service.inter.domain"/>
+        <package name="com.hejun.demo.service.inter.domain"/>
     </typeAliases>
 
     <plugins>

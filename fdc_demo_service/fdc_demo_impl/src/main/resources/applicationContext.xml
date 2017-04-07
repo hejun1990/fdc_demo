@@ -103,5 +103,5 @@
         </aop:aspect>
     </aop:config>
 
-    <import resource="classpath:dubbo-provider.xml"/>
+    <import resource="dubbo-provider.xml"/>
 </beans>

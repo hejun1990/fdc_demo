@@ -131,6 +131,12 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
         </profile>
+        <profile>
+            <id>product</id>
+            <properties>
+                <profiles.active>product</profiles.active>
+            </properties>
+        </profile>
     </profiles>
 
     <build>
@@ -144,13 +150,19 @@
                 </includes>
             </resource>
             <resource>
+                <directory>src/main/resources</directory>
+                <excludes>
+                    <exclude>dev/**</exclude>
+                    <exclude>product/**</exclude>
+                </excludes>
+            </resource>
+            <resource>
                 <directory>src/main/resources/${profiles.active}</directory>
             </resource>
 
             <!-- 结合com.alibaba.dubbo.container.Main，需要重点掌握-->
             <resource>
                 <targetPath>${project.build.directory}/classes/META-INF/spring</targetPath>
-                <!--<directory>src/main/resources/local</directory>-->
                 <directory>src/main/resources/${profiles.active}</directory>
                 <filtering>true</filtering>
                 <includes>

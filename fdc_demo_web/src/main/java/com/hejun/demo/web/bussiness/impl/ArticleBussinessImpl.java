@@ -1,7 +1,9 @@
 package com.hejun.demo.web.bussiness.impl;
 
 import com.hejun.demo.service.inter.domain.generation.Article;
+import com.hejun.demo.service.inter.service.sitemanager.ArticleService;
 import com.hejun.demo.web.bussiness.ArticleBussiness;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,6 +14,10 @@ import java.util.Map;
  */
 @Service("articleBussiness")
 public class ArticleBussinessImpl implements ArticleBussiness {
+
+    @Autowired
+    private ArticleService articleService;
+
     @Override
     public List<Article> getArticlesByPage(Map<String, Object> params) {
         return null;
@@ -29,7 +35,7 @@ public class ArticleBussinessImpl implements ArticleBussiness {
 
     @Override
     public boolean addArticle(Article article) {
-        return false;
+        return articleService.insertSelective(article) > 0;
     }
 
     @Override
