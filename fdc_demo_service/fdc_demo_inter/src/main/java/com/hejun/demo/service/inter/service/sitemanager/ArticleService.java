@@ -11,12 +11,11 @@ import java.util.List;
 public interface ArticleService {
     int countByExample(ArticleExample example);
 
-    int insertSelective(Article record);
+    boolean insertSelective(Article record);
 
     List<Article> selectByExample(ArticleExample example);
 
     Article selectByPrimaryKey(String id);
 
-    int updateByPrimaryKeySelective(Article record);
-
+    boolean updateByPrimaryKeySelective(Article record);
 }

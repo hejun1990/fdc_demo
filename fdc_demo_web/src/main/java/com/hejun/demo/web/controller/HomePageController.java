@@ -2,6 +2,8 @@ package com.hejun.demo.web.controller;
 
 import com.hejun.demo.service.inter.domain.generation.Article;
 import com.hejun.demo.web.bussiness.ArticleBussiness;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -17,13 +19,14 @@ import java.util.Map;
  */
 @Controller
 public class HomePageController {
-//    private Logger logger = LoggerFactory.getLogger(HomePageController.class);
+    private static Logger logger = LoggerFactory.getLogger(HomePageController.class);
 
     @Autowired
     private ArticleBussiness articleBussiness;
 
     /**
      * 首页
+     *
      * @param modelMap
      * @return
      */
@@ -35,6 +38,7 @@ public class HomePageController {
 
     /**
      * 进入添加文章页面
+     *
      * @return
      */
     @RequestMapping(value = "/toaddarticle", method = RequestMethod.GET)
@@ -44,6 +48,7 @@ public class HomePageController {
 
     /**
      * 添加文章
+     *
      * @param article
      * @return
      */

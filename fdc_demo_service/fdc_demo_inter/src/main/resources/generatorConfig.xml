@@ -37,17 +37,12 @@
         <property name="enableSubPackages" value="true"/>
         </javaClientGenerator>
         <!-- 要生成哪些表-->
-        <table tableName="article_content" domainObjectName="ArticleContent">
+        <table tableName="article_tag" domainObjectName="ArticleTag">
             <property name="useActualColumnNames" value="false"/>
         </table>
-        <!--
-        <table tableName="nhs_user_per_day_click" domainObjectName="NhsUserPerDayClick">
-            <property name="useActualColumnNames" value="false"/>
-        </table>
-        <table tableName="nhs_subway_search_params" domainObjectName="NhsSubwaySearchParams">
-            <property name="useActualColumnNames" value="false"/>
-        </table>
-        -->
 
+        <!--<table tableName="article_content" domainObjectName="ArticleContent">-->
+            <!--<property name="useActualColumnNames" value="false"/>-->
+        <!--</table>-->
     </context>
 </generatorConfiguration>

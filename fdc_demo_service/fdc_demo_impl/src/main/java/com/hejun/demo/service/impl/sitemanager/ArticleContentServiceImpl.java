@@ -22,8 +22,8 @@ public class ArticleContentServiceImpl implements ArticleContentService {
     }
 
     @Override
-    public int insertSelective(ArticleContent record) {
-        return articleContentMapper.insertSelective(record);
+    public boolean insertSelective(ArticleContent record) {
+        return articleContentMapper.insertSelective(record) > 0;
     }
 
     @Override
@@ -42,12 +42,12 @@ public class ArticleContentServiceImpl implements ArticleContentService {
     }
 
     @Override
-    public int updateByExampleSelective(ArticleContent record, ArticleContentExample example) {
-        return articleContentMapper.updateByExampleSelective(record, example);
+    public boolean updateByExampleSelective(ArticleContent record, ArticleContentExample example) {
+        return articleContentMapper.updateByExampleSelective(record, example) > 0;
     }
 
     @Override
-    public int updateByPrimaryKeySelective(ArticleContent record) {
-        return articleContentMapper.updateByPrimaryKeySelective(record);
+    public boolean updateByPrimaryKeySelective(ArticleContent record) {
+        return articleContentMapper.updateByPrimaryKeySelective(record) > 0;
     }
 }

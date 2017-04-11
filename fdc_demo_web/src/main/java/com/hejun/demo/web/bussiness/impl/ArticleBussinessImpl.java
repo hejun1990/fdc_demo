@@ -35,7 +35,7 @@ public class ArticleBussinessImpl implements ArticleBussiness {
 
     @Override
     public boolean addArticle(Article article) {
-        return articleService.insertSelective(article) > 0;
+        return articleService.insertSelective(article);
     }
 
     @Override

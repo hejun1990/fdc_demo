@@ -11,7 +11,7 @@ import lombok.ToString;
 @Domain
 @Data
 @ToString
-public class Article implements Serializable {
+public class WebsiteSpider implements Serializable {
     /** 主键 */
     @BizId
     private String id;
@@ -31,9 +31,6 @@ public class Article implements Serializable {
     /** 是否删除(0:存在;1:删除) */
     private int isDel;
 
-    /** 文章类型 */
-    private Byte articleType;
-
     /** 标题 */
     private String title;
 
@@ -46,7 +43,7 @@ public class Article implements Serializable {
     /** 来源网站编号 */
     private Byte originalSiteCode;
 
-    /** 来源网站名称 */
+    /** 来源网站 */
     private String originalSiteName;
 
     /** 来源链接 */
@@ -54,6 +51,9 @@ public class Article implements Serializable {
 
     /** 图片 */
     private String picUrl;
+
+    /** 分析次数 */
+    private Integer analysisCount;
 
     /** id属性对应的表达式属性，
      * 目前用来支持update set 字段=表达式(如:'字段+1')这种场景
@@ -90,12 +90,6 @@ public class Article implements Serializable {
      **/
     @JsonIgnore
     private String isDelExpression;
-
-    /** articleType属性对应的表达式属性，
-     * 目前用来支持update set 字段=表达式(如:'字段+1')这种场景
-     **/
-    @JsonIgnore
-    private String articleTypeExpression;
 
     /** title属性对应的表达式属性，
      * 目前用来支持update set 字段=表达式(如:'字段+1')这种场景
@@ -138,6 +132,12 @@ public class Article implements Serializable {
      **/
     @JsonIgnore
     private String picUrlExpression;
+
+    /** analysisCount属性对应的表达式属性，
+     * 目前用来支持update set 字段=表达式(如:'字段+1')这种场景
+     **/
+    @JsonIgnore
+    private String analysisCountExpression;
 
     private static final long serialVersionUID = 1L;
 }

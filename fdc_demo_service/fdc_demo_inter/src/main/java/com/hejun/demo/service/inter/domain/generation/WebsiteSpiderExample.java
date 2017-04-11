@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class ArticleExample {
+public class WebsiteSpiderExample {
     protected String orderByClause;
 
     protected boolean distinct;
@@ -22,7 +22,7 @@ public class ArticleExample {
     /** 设置查询字段 */
     protected List<String> queryColumns;
 
-    public ArticleExample() {
+    public WebsiteSpiderExample() {
         oredCriteria = new ArrayList<Criteria>();
         queryColumns = new ArrayList<String>();
     }
@@ -526,66 +526,6 @@ public class ArticleExample {
             return (Criteria) this;
         }
 
-        public Criteria andArticleTypeIsNull() {
-            addCriterion("article_type is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andArticleTypeIsNotNull() {
-            addCriterion("article_type is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andArticleTypeEqualTo(Byte value) {
-            addCriterion("article_type =", value, "articleType");
-            return (Criteria) this;
-        }
-
-        public Criteria andArticleTypeNotEqualTo(Byte value) {
-            addCriterion("article_type <>", value, "articleType");
-            return (Criteria) this;
-        }
-
-        public Criteria andArticleTypeGreaterThan(Byte value) {
-            addCriterion("article_type >", value, "articleType");
-            return (Criteria) this;
-        }
-
-        public Criteria andArticleTypeGreaterThanOrEqualTo(Byte value) {
-            addCriterion("article_type >=", value, "articleType");
-            return (Criteria) this;
-        }
-
-        public Criteria andArticleTypeLessThan(Byte value) {
-            addCriterion("article_type <", value, "articleType");
-            return (Criteria) this;
-        }
-
-        public Criteria andArticleTypeLessThanOrEqualTo(Byte value) {
-            addCriterion("article_type <=", value, "articleType");
-            return (Criteria) this;
-        }
-
-        public Criteria andArticleTypeIn(List<Byte> values) {
-            addCriterion("article_type in", values, "articleType");
-            return (Criteria) this;
-        }
-
-        public Criteria andArticleTypeNotIn(List<Byte> values) {
-            addCriterion("article_type not in", values, "articleType");
-            return (Criteria) this;
-        }
-
-        public Criteria andArticleTypeBetween(Byte value1, Byte value2) {
-            addCriterion("article_type between", value1, value2, "articleType");
-            return (Criteria) this;
-        }
-
-        public Criteria andArticleTypeNotBetween(Byte value1, Byte value2) {
-            addCriterion("article_type not between", value1, value2, "articleType");
-            return (Criteria) this;
-        }
-
         public Criteria andTitleIsNull() {
             addCriterion("title is null");
             return (Criteria) this;
@@ -1063,6 +1003,66 @@ public class ArticleExample {
 
         public Criteria andPicUrlNotBetween(String value1, String value2) {
             addCriterion("pic_url not between", value1, value2, "picUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andAnalysisCountIsNull() {
+            addCriterion("analysis_count is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAnalysisCountIsNotNull() {
+            addCriterion("analysis_count is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAnalysisCountEqualTo(Integer value) {
+            addCriterion("analysis_count =", value, "analysisCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andAnalysisCountNotEqualTo(Integer value) {
+            addCriterion("analysis_count <>", value, "analysisCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andAnalysisCountGreaterThan(Integer value) {
+            addCriterion("analysis_count >", value, "analysisCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andAnalysisCountGreaterThanOrEqualTo(Integer value) {
+            addCriterion("analysis_count >=", value, "analysisCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andAnalysisCountLessThan(Integer value) {
+            addCriterion("analysis_count <", value, "analysisCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andAnalysisCountLessThanOrEqualTo(Integer value) {
+            addCriterion("analysis_count <=", value, "analysisCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andAnalysisCountIn(List<Integer> values) {
+            addCriterion("analysis_count in", values, "analysisCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andAnalysisCountNotIn(List<Integer> values) {
+            addCriterion("analysis_count not in", values, "analysisCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andAnalysisCountBetween(Integer value1, Integer value2) {
+            addCriterion("analysis_count between", value1, value2, "analysisCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andAnalysisCountNotBetween(Integer value1, Integer value2) {
+            addCriterion("analysis_count not between", value1, value2, "analysisCount");
             return (Criteria) this;
         }
     }

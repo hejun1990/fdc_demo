@@ -11,7 +11,7 @@ import java.util.List;
 public interface ArticleContentService {
     int countByExample(ArticleContentExample example);
 
-    int insertSelective(ArticleContent record);
+    boolean insertSelective(ArticleContent record);
 
     List<ArticleContent> selectByExampleWithBLOBs(ArticleContentExample example);
 
@@ -19,7 +19,7 @@ public interface ArticleContentService {
 
     ArticleContent selectByPrimaryKey(String id);
 
-    int updateByExampleSelective(ArticleContent record, ArticleContentExample example);
+    boolean updateByExampleSelective(ArticleContent record, ArticleContentExample example);
 
-    int updateByPrimaryKeySelective(ArticleContent record);
+    boolean updateByPrimaryKeySelective(ArticleContent record);
 }
