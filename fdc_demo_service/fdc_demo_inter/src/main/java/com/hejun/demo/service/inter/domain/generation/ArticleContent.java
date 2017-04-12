@@ -1,7 +1,6 @@
 package com.hejun.demo.service.inter.domain.generation;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fdc.platform.common.validator.annotation.BizId;
 import com.fdc.platform.common.validator.annotation.Domain;
 import java.io.Serializable;
 import lombok.Data;
@@ -12,14 +11,13 @@ import lombok.ToString;
 @ToString
 public class ArticleContent implements Serializable {
     /** 主键 */
-    @BizId
     private String id;
 
     /** 文章ID(外键,关联article表主键) */
     private String articleId;
 
     /** 摘要 */
-    private String digest;
+    private String summary;
 
     /** 内容 */
     private String content;
@@ -36,11 +34,11 @@ public class ArticleContent implements Serializable {
     @JsonIgnore
     private String articleIdExpression;
 
-    /** digest属性对应的表达式属性，
+    /** summary属性对应的表达式属性，
      * 目前用来支持update set 字段=表达式(如:'字段+1')这种场景
      **/
     @JsonIgnore
-    private String digestExpression;
+    private String summaryExpression;
 
     /** content属性对应的表达式属性，
      * 目前用来支持update set 字段=表达式(如:'字段+1')这种场景

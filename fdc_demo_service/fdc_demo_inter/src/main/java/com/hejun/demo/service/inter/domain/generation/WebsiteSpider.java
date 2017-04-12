@@ -1,7 +1,6 @@
 package com.hejun.demo.service.inter.domain.generation;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fdc.platform.common.validator.annotation.BizId;
 import com.fdc.platform.common.validator.annotation.Domain;
 import java.io.Serializable;
 import java.util.Date;
@@ -13,7 +12,6 @@ import lombok.ToString;
 @ToString
 public class WebsiteSpider implements Serializable {
     /** 主键 */
-    @BizId
     private String id;
 
     /** 创建时间 */
@@ -34,7 +32,7 @@ public class WebsiteSpider implements Serializable {
     /** 标题 */
     private String title;
 
-    /** 副标题 */
+    /** 副标题(或短标题) */
     private String viceTitle;
 
     /** 作者 */
@@ -54,6 +52,15 @@ public class WebsiteSpider implements Serializable {
 
     /** 分析次数 */
     private Integer analysisCount;
+
+    /** 标签(多个标签以逗号分隔) */
+    private String tags;
+
+    /** 关键字(多个标签以逗号分隔) */
+    private String keywords;
+
+    /** 摘要 */
+    private String summary;
 
     /** id属性对应的表达式属性，
      * 目前用来支持update set 字段=表达式(如:'字段+1')这种场景
@@ -138,6 +145,24 @@ public class WebsiteSpider implements Serializable {
      **/
     @JsonIgnore
     private String analysisCountExpression;
+
+    /** tags属性对应的表达式属性，
+     * 目前用来支持update set 字段=表达式(如:'字段+1')这种场景
+     **/
+    @JsonIgnore
+    private String tagsExpression;
+
+    /** keywords属性对应的表达式属性，
+     * 目前用来支持update set 字段=表达式(如:'字段+1')这种场景
+     **/
+    @JsonIgnore
+    private String keywordsExpression;
+
+    /** summary属性对应的表达式属性，
+     * 目前用来支持update set 字段=表达式(如:'字段+1')这种场景
+     **/
+    @JsonIgnore
+    private String summaryExpression;
 
     private static final long serialVersionUID = 1L;
 }

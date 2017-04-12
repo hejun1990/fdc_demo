@@ -275,73 +275,73 @@ public class ArticleContentExample {
             return (Criteria) this;
         }
 
-        public Criteria andDigestIsNull() {
-            addCriterion("digest is null");
+        public Criteria andSummaryIsNull() {
+            addCriterion("summary is null");
             return (Criteria) this;
         }
 
-        public Criteria andDigestIsNotNull() {
-            addCriterion("digest is not null");
+        public Criteria andSummaryIsNotNull() {
+            addCriterion("summary is not null");
             return (Criteria) this;
         }
 
-        public Criteria andDigestEqualTo(String value) {
-            addCriterion("digest =", value, "digest");
+        public Criteria andSummaryEqualTo(String value) {
+            addCriterion("summary =", value, "summary");
             return (Criteria) this;
         }
 
-        public Criteria andDigestNotEqualTo(String value) {
-            addCriterion("digest <>", value, "digest");
+        public Criteria andSummaryNotEqualTo(String value) {
+            addCriterion("summary <>", value, "summary");
             return (Criteria) this;
         }
 
-        public Criteria andDigestGreaterThan(String value) {
-            addCriterion("digest >", value, "digest");
+        public Criteria andSummaryGreaterThan(String value) {
+            addCriterion("summary >", value, "summary");
             return (Criteria) this;
         }
 
-        public Criteria andDigestGreaterThanOrEqualTo(String value) {
-            addCriterion("digest >=", value, "digest");
+        public Criteria andSummaryGreaterThanOrEqualTo(String value) {
+            addCriterion("summary >=", value, "summary");
             return (Criteria) this;
         }
 
-        public Criteria andDigestLessThan(String value) {
-            addCriterion("digest <", value, "digest");
+        public Criteria andSummaryLessThan(String value) {
+            addCriterion("summary <", value, "summary");
             return (Criteria) this;
         }
 
-        public Criteria andDigestLessThanOrEqualTo(String value) {
-            addCriterion("digest <=", value, "digest");
+        public Criteria andSummaryLessThanOrEqualTo(String value) {
+            addCriterion("summary <=", value, "summary");
             return (Criteria) this;
         }
 
-        public Criteria andDigestLike(String value) {
-            addCriterion("digest like", value, "digest");
+        public Criteria andSummaryLike(String value) {
+            addCriterion("summary like", value, "summary");
             return (Criteria) this;
         }
 
-        public Criteria andDigestNotLike(String value) {
-            addCriterion("digest not like", value, "digest");
+        public Criteria andSummaryNotLike(String value) {
+            addCriterion("summary not like", value, "summary");
             return (Criteria) this;
         }
 
-        public Criteria andDigestIn(List<String> values) {
-            addCriterion("digest in", values, "digest");
+        public Criteria andSummaryIn(List<String> values) {
+            addCriterion("summary in", values, "summary");
             return (Criteria) this;
         }
 
-        public Criteria andDigestNotIn(List<String> values) {
-            addCriterion("digest not in", values, "digest");
+        public Criteria andSummaryNotIn(List<String> values) {
+            addCriterion("summary not in", values, "summary");
             return (Criteria) this;
         }
 
-        public Criteria andDigestBetween(String value1, String value2) {
-            addCriterion("digest between", value1, value2, "digest");
+        public Criteria andSummaryBetween(String value1, String value2) {
+            addCriterion("summary between", value1, value2, "summary");
             return (Criteria) this;
         }
 
-        public Criteria andDigestNotBetween(String value1, String value2) {
-            addCriterion("digest not between", value1, value2, "digest");
+        public Criteria andSummaryNotBetween(String value1, String value2) {
+            addCriterion("summary not between", value1, value2, "summary");
             return (Criteria) this;
         }
     }

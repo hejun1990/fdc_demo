@@ -5,6 +5,7 @@ import com.hejun.demo.service.inter.domain.generation.WebsiteSpiderExample;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by hejun-FDC on 2017/4/11.
@@ -19,4 +20,8 @@ public interface WebsiteSpiderService {
     List<WebsiteSpider> selectByExample(WebsiteSpiderExample example);
 
     boolean updateByPrimaryKeySelective(@Param("record") WebsiteSpider record);
+
+    int countByCondition(Map<String, Object> condition);
+
+    List<WebsiteSpider> selectPageByCondition(Map<String, Object> condition);
 }

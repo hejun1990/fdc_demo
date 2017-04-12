@@ -2,23 +2,41 @@ package com.hejun.demo.web.enumeration;
 
 /**
  * 爬虫访问入口
- *
+ * <p>
  * Created by hejun-FDC on 2017/4/11.
  */
 public enum SpiderEntry {
-    SOHU(1, "搜狐科技", "http://v2.sohu.com/public-api/feed?scene=CHANNEL&sceneId=30&page={PAGE}&size=20&callback=hj"),
-    SINA(2, "新浪科技", ""),
-    QQ(3, "腾讯科技", ""),
-    WANGYI(4, "网易科技", "");
+    SOHU(1, "搜狐科技",
+            "http://v2.sohu.com/public-api/feed?scene=CHANNEL&sceneId=30&page={PAGE}&size=20&callback=hj",
+            "http://www.sohu.com/a/{ID}_{AUTHORID}"),
+    SINA(2, "新浪科技",
+            "http://feed.mix.sina.com.cn/api/roll/get?pageid=1&lid=21&num=30&versionNumber=1.2.8&page={PAGE}&encode=utf-8&callback=feedCardJsonpCallback",
+            ""),
+    QQ(3, "腾讯科技", "", ""),
+    WANGYI(4, "网易科技", "", "");
 
+    /**
+     * 网站编号
+     */
     private int code;
+    /**
+     * 网站名称
+     */
     private String name;
-    private String url;
+    /**
+     * 爬虫入口地址
+     */
+    private String spiderUrl;
+    /**
+     * 文章访问地址
+     */
+    private String visitUrl;
 
-    private SpiderEntry(int code, String name, String url) {
+    private SpiderEntry(int code, String name, String spiderUrl, String visitUrl) {
         this.code = code;
         this.name = name;
-        this.url = url;
+        this.spiderUrl = spiderUrl;
+        this.visitUrl = visitUrl;
     }
 
     public int getCode() {
@@ -37,11 +55,19 @@ public enum SpiderEntry {
         this.name = name;
     }
 
-    public String getUrl() {
-        return url;
+    public String getSpiderUrl() {
+        return spiderUrl;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setSpiderUrl(String spiderUrl) {
+        this.spiderUrl = spiderUrl;
+    }
+
+    public String getVisitUrl() {
+        return visitUrl;
+    }
+
+    public void setVisitUrl(String visitUrl) {
+        this.visitUrl = visitUrl;
     }
 }

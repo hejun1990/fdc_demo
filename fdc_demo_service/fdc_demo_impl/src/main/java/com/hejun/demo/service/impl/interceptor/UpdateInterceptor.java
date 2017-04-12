@@ -14,7 +14,7 @@ public class UpdateInterceptor {
         Object[] args = joinPoint.getArgs();
 
         for (Object arg : args) {
-            String createName = "test";
+            String createName = "android";
             Class cla = arg.getClass();
             if (cla.isAnnotationPresent(Domain.class)) {
                 try {

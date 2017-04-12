@@ -4,7 +4,7 @@
   <resultMap id="BaseResultMap" type="com.hejun.demo.service.inter.domain.generation.ArticleContent" >
     <id column="id" property="id" jdbcType="VARCHAR" />
     <result column="article_id" property="articleId" jdbcType="VARCHAR" />
-    <result column="digest" property="digest" jdbcType="VARCHAR" />
+    <result column="summary" property="summary" jdbcType="VARCHAR" />
   </resultMap>
   <resultMap id="ResultMapWithBLOBs" type="com.hejun.demo.service.inter.domain.generation.ArticleContent" extends="BaseResultMap" >
     <result column="content" property="content" jdbcType="LONGVARCHAR" />
@@ -70,7 +70,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, article_id, digest
+    id, article_id, summary
   </sql>
   <sql id="Blob_Column_List" >
     content
@@ -137,9 +137,9 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.hejun.demo.service.inter.domain.generation.ArticleContent" useGeneratedKeys="true" keyProperty="id" >
-    insert into article_content (id, article_id, digest, 
+    insert into article_content (id, article_id, summary, 
       content)
-    values (#{id,jdbcType=VARCHAR}, #{articleId,jdbcType=VARCHAR}, #{digest,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=VARCHAR}, #{articleId,jdbcType=VARCHAR}, #{summary,jdbcType=VARCHAR}, 
       #{content,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.hejun.demo.service.inter.domain.generation.ArticleContent" useGeneratedKeys="true" keyProperty="id" >
@@ -151,8 +151,8 @@
       <if test="articleId != null" >
         article_id,
       </if>
-      <if test="digest != null" >
-        digest,
+      <if test="summary != null" >
+        summary,
       </if>
       <if test="content != null" >
         content,
@@ -165,8 +165,8 @@
       <if test="articleId != null" >
         #{articleId,jdbcType=VARCHAR},
       </if>
-      <if test="digest != null" >
-        #{digest,jdbcType=VARCHAR},
+      <if test="summary != null" >
+        #{summary,jdbcType=VARCHAR},
       </if>
       <if test="content != null" >
         #{content,jdbcType=LONGVARCHAR},
@@ -189,11 +189,11 @@
         <if test="record.articleIdExpression!=null" >
           article_id = ${record.articleIdExpression},
         </if>
-        <if test="record.digest!=null and record.digestExpression==null" >
-          digest = #{record.digest,jdbcType=VARCHAR},
+        <if test="record.summary!=null and record.summaryExpression==null" >
+          summary = #{record.summary,jdbcType=VARCHAR},
         </if>
-        <if test="record.digestExpression!=null" >
-          digest = ${record.digestExpression},
+        <if test="record.summaryExpression!=null" >
+          summary = ${record.summaryExpression},
         </if>
       </trim>
     </set>
@@ -205,7 +205,7 @@
     update article_content
     set id = #{record.id,jdbcType=VARCHAR},
       article_id = #{record.articleId,jdbcType=VARCHAR},
-      digest = #{record.digest,jdbcType=VARCHAR},
+      summary = #{record.summary,jdbcType=VARCHAR},
       content = #{record.content,jdbcType=LONGVARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -215,7 +215,7 @@
     update article_content
     set id = #{record.id,jdbcType=VARCHAR},
       article_id = #{record.articleId,jdbcType=VARCHAR},
-      digest = #{record.digest,jdbcType=VARCHAR}
+      summary = #{record.summary,jdbcType=VARCHAR}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -230,11 +230,11 @@
         <if test="record.articleIdExpression!=null" >
           article_id = ${record.articleIdExpression},
         </if>
-        <if test="record.digest!=null and record.digestExpression==null" >
-          digest = #{record.digest,jdbcType=VARCHAR},
+        <if test="record.summary!=null and record.summaryExpression==null" >
+          summary = #{record.summary,jdbcType=VARCHAR},
         </if>
-        <if test="record.digestExpression!=null" >
-          digest = ${record.digestExpression},
+        <if test="record.summaryExpression!=null" >
+          summary = ${record.summaryExpression},
         </if>
       </trim>
     </set>
@@ -243,14 +243,14 @@
   <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.hejun.demo.service.inter.domain.generation.ArticleContent" >
     update article_content
     set article_id = #{articleId,jdbcType=VARCHAR},
-      digest = #{digest,jdbcType=VARCHAR},
+      summary = #{summary,jdbcType=VARCHAR},
       content = #{content,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.hejun.demo.service.inter.domain.generation.ArticleContent" >
     update article_content
     set article_id = #{articleId,jdbcType=VARCHAR},
-      digest = #{digest,jdbcType=VARCHAR}
+      summary = #{summary,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
 </mapper>

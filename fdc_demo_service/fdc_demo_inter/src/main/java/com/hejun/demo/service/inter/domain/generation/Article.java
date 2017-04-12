@@ -12,6 +12,7 @@ import lombok.ToString;
 @Data
 @ToString
 public class Article implements Serializable {
+    private static final long serialVersionUID = -5199743972285405667L;
     /** 主键 */
     @BizId
     private String id;
@@ -138,6 +139,4 @@ public class Article implements Serializable {
      **/
     @JsonIgnore
     private String picUrlExpression;
-
-    private static final long serialVersionUID = 1L;
 }
