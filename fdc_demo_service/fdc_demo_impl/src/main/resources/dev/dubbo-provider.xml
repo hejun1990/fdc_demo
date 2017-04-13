@@ -16,6 +16,7 @@
     <dubbo:service interface="com.hejun.demo.service.inter.service.sitemanager.ArticleTagService" ref="articleTagService" retries="1" timeout="6000"/>
     <dubbo:service interface="com.hejun.demo.service.inter.service.sitemanager.TagStoreService" ref="tagStoreService" retries="1" timeout="6000"/>
     <dubbo:service interface="com.hejun.demo.service.inter.service.sitemanager.WebsiteSpiderService" ref="websiteSpiderService" retries="1" timeout="6000"/>
+    <dubbo:service interface="com.hejun.demo.service.inter.service.sitemanager.KeywordsStoreService" ref="keywordsStoreService" retries="1" timeout="6000"/>
 
     <!-- 和本地bean一样实现服务 -->
     <bean id="articleService" class="com.hejun.demo.service.impl.sitemanager.ArticleServiceImpl" />
@@ -23,4 +24,5 @@
     <bean id="articleTagService" class="com.hejun.demo.service.impl.sitemanager.ArticleTagServiceImpl" />
     <bean id="tagStoreService" class="com.hejun.demo.service.impl.sitemanager.TagStoreServiceImpl" />
     <bean id="websiteSpiderService" class="com.hejun.demo.service.impl.sitemanager.WebsiteSpiderServiceImpl" />
+    <bean id="keywordsStoreService" class="com.hejun.demo.service.impl.sitemanager.KeywordsStoreServiceImpl" />
 </beans>

@@ -10,6 +10,4 @@ import java.util.List;
  */
 public interface TagStoreBussiness {
     boolean addTagStore(TagStore record);
-
-    List<TagStore> selectByExample(TagStoreExample example);
 }

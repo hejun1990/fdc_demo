@@ -15,4 +15,5 @@
     <dubbo:reference id="websiteSpiderService" interface="com.hejun.demo.service.inter.service.sitemanager.WebsiteSpiderService" />
     <dubbo:reference id="tagStoreService" interface="com.hejun.demo.service.inter.service.sitemanager.TagStoreService" />
     <dubbo:reference id="aticleTagService" interface="com.hejun.demo.service.inter.service.sitemanager.ArticleTagService" />
+    <dubbo:reference id="keywordsStoreService" interface="com.hejun.demo.service.inter.service.sitemanager.KeywordsStoreService" />
 </beans>

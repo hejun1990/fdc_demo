@@ -21,9 +21,4 @@ public class TagStoreBussinessImpl implements TagStoreBussiness {
     public boolean addTagStore(TagStore record) {
         return tagStoreService.insertSelective(record);
     }
-
-    @Override
-    public List<TagStore> selectByExample(TagStoreExample example) {
-        return tagStoreService.selectByExample(example);
-    }
 }

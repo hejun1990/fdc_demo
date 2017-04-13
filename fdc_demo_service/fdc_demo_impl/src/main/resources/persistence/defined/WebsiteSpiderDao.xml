@@ -19,11 +19,12 @@
     <result column="tags" property="tags" jdbcType="VARCHAR" />
     <result column="keywords" property="keywords" jdbcType="VARCHAR" />
     <result column="summary" property="summary" jdbcType="VARCHAR" />
+    <result column="version" property="version" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Base_Column_List" >
     id, gmt_created, gmt_modified, created_by, modified_by, is_del, title, vice_title, 
     author, original_site_code, original_site_name, original_url, pic_url, analysis_count, 
-    tags, keywords, summary
+    tags, keywords, summary, version
   </sql>
   <select id="selectPageByCondition" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select
@@ -59,6 +60,9 @@
       </if>
       <if test="keywords != null">
         and keywords = #{keywords}
+      </if>
+      <if test="version != null">
+        and version = #{version}
       </if>
       and is_del = 0
     </where>
@@ -102,6 +106,9 @@
       </if>
       <if test="keywords != null">
         and keywords = #{keywords}
+      </if>
+      <if test="version != null">
+        and version = #{version}
       </if>
       and is_del = 0
     </where>

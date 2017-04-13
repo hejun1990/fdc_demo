@@ -22,4 +22,9 @@ public interface WebsiteSpiderBussiness {
      * 搜狐科技文章爬虫
      */
     void sohuITSpider();
+
+    /**
+     * 新浪科技爬虫
+     */
+    void sinaITSpider();
 }
