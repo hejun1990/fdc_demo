@@ -54,6 +54,7 @@ public class WebsiteSpiderBussinessImpl implements WebsiteSpiderBussiness {
         String ori_spiderUrl = SpiderEntry.SOHU.getSpiderUrl();
         int page = 1;
         try {
+            long startTime = System.currentTimeMillis();
             // 目前搜狐科技新闻数据接口最多返回到50页内容
             for (; page <= 50; page++) {
                 String spiderUrl = ori_spiderUrl.replace("{PAGE}", String.valueOf(page));
@@ -132,7 +133,10 @@ public class WebsiteSpiderBussinessImpl implements WebsiteSpiderBussiness {
                 }
                 logger.info("搜狐科技爬虫爬完第{}页。", page);
             }
-            logger.info("搜狐科技爬虫任务完成。");
+            long endTime = System.currentTimeMillis();
+            logger.info("搜狐科技爬虫任务完成，耗时{}分{}秒。",
+                    (endTime - startTime) / (1000 * 60),
+                    (endTime - startTime) % (1000 * 60));
         } catch (Exception e) {
             logger.info("搜狐科技爬虫爬到第{}页出错：{}", page, e.toString());
         }
@@ -165,6 +169,7 @@ public class WebsiteSpiderBussinessImpl implements WebsiteSpiderBussiness {
             }
         }
         try {
+            long startTime = System.currentTimeMillis();
             // 开始从第1页读取信息
             for (; page <= totalPage; page++) {
                 spiderUrl = ori_spiderUrl.replace("{PAGE}", String.valueOf(page));
@@ -263,7 +268,10 @@ public class WebsiteSpiderBussinessImpl implements WebsiteSpiderBussiness {
                 }
                 logger.info("新浪科技爬虫爬完第{}页。", page);
             }
-            logger.info("新浪科技爬虫任务完成。");
+            long endTime = System.currentTimeMillis();
+            logger.info("新浪科技爬虫任务完成，耗时{}分{}秒。",
+                    (endTime - startTime) / (1000 * 60),
+                    (endTime - startTime) % (1000 * 60));
         } catch (Exception e) {
             logger.error("新浪科技爬虫爬到第{}页出错：{}", page, e.toString());
         }
@@ -275,11 +283,15 @@ public class WebsiteSpiderBussinessImpl implements WebsiteSpiderBussiness {
         String ori_spiderUrl = SpiderEntry.QQ.getSpiderUrl();
         int totalDay = 365 * 3; // 从当天往前爬3年的数据
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        long startTime = System.currentTimeMillis();
         for (int amount = 0; amount < totalDay; amount++) {
             Map<String, String> replaceMap = getQQSpiderUrlReplace(-amount, formatter);
             handleQQITContext(ori_spiderUrl, replaceMap, 1);
         }
-        logger.info("腾讯科技爬虫任务完成。");
+        long endTime = System.currentTimeMillis();
+        logger.info("腾讯科技爬虫任务完成，耗时{}分{}秒。",
+                (endTime - startTime) / (1000 * 60),
+                (endTime - startTime) % (1000 * 60));
     }
 
     /**
