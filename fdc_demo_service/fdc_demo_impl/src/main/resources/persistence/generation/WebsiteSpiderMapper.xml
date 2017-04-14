@@ -19,6 +19,7 @@
     <result column="tags" property="tags" jdbcType="VARCHAR" />
     <result column="keywords" property="keywords" jdbcType="VARCHAR" />
     <result column="summary" property="summary" jdbcType="VARCHAR" />
+    <result column="pub_time" property="pubTime" jdbcType="TIMESTAMP" />
     <result column="version" property="version" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Example_Where_Clause" >
@@ -84,7 +85,7 @@
   <sql id="Base_Column_List" >
     id, gmt_created, gmt_modified, created_by, modified_by, is_del, title, vice_title, 
     author, original_site_code, original_site_name, original_url, pic_url, analysis_count, 
-    tags, keywords, summary, version
+    tags, keywords, summary, pub_time, version
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.hejun.demo.service.inter.domain.generation.WebsiteSpiderExample" >
     select
@@ -132,15 +133,15 @@
       title, vice_title, author, 
       original_site_code, original_site_name, original_url, 
       pic_url, analysis_count, tags, 
-      keywords, summary, version
-      )
+      keywords, summary, pub_time, 
+      version)
     values (#{id,jdbcType=VARCHAR}, #{gmtCreated,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, 
       #{createdBy,jdbcType=VARCHAR}, #{modifiedBy,jdbcType=VARCHAR}, #{isDel,jdbcType=BIT}, 
       #{title,jdbcType=VARCHAR}, #{viceTitle,jdbcType=VARCHAR}, #{author,jdbcType=VARCHAR}, 
       #{originalSiteCode,jdbcType=TINYINT}, #{originalSiteName,jdbcType=VARCHAR}, #{originalUrl,jdbcType=VARCHAR}, 
       #{picUrl,jdbcType=VARCHAR}, #{analysisCount,jdbcType=INTEGER}, #{tags,jdbcType=VARCHAR}, 
-      #{keywords,jdbcType=VARCHAR}, #{summary,jdbcType=VARCHAR}, #{version,jdbcType=INTEGER}
-      )
+      #{keywords,jdbcType=VARCHAR}, #{summary,jdbcType=VARCHAR}, #{pubTime,jdbcType=TIMESTAMP}, 
+      #{version,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.hejun.demo.service.inter.domain.generation.WebsiteSpider" useGeneratedKeys="true" keyProperty="id" >
     insert into website_spider
@@ -195,6 +196,9 @@
       </if>
       <if test="summary != null" >
         summary,
+      </if>
+      <if test="pubTime != null" >
+        pub_time,
       </if>
       <if test="version != null" >
         version,
@@ -251,6 +255,9 @@
       </if>
       <if test="summary != null" >
         #{summary,jdbcType=VARCHAR},
+      </if>
+      <if test="pubTime != null" >
+        #{pubTime,jdbcType=TIMESTAMP},
       </if>
       <if test="version != null" >
         #{version,jdbcType=INTEGER},
@@ -363,6 +370,12 @@
         <if test="record.summaryExpression!=null" >
           summary = ${record.summaryExpression},
         </if>
+        <if test="record.pubTime!=null and record.pubTimeExpression==null" >
+          pub_time = #{record.pubTime,jdbcType=TIMESTAMP},
+        </if>
+        <if test="record.pubTimeExpression!=null" >
+          pub_time = ${record.pubTimeExpression},
+        </if>
         <if test="record.version!=null and record.versionExpression==null" >
           version = #{record.version,jdbcType=INTEGER},
         </if>
@@ -394,6 +407,7 @@
       tags = #{record.tags,jdbcType=VARCHAR},
       keywords = #{record.keywords,jdbcType=VARCHAR},
       summary = #{record.summary,jdbcType=VARCHAR},
+      pub_time = #{record.pubTime,jdbcType=TIMESTAMP},
       version = #{record.version,jdbcType=INTEGER}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -499,6 +513,12 @@
         <if test="record.summaryExpression!=null" >
           summary = ${record.summaryExpression},
         </if>
+        <if test="record.pubTime!=null and record.pubTimeExpression==null" >
+          pub_time = #{record.pubTime,jdbcType=TIMESTAMP},
+        </if>
+        <if test="record.pubTimeExpression!=null" >
+          pub_time = ${record.pubTimeExpression},
+        </if>
         <if test="record.version!=null and record.versionExpression==null" >
           version = #{record.version,jdbcType=INTEGER},
         </if>
@@ -527,6 +547,7 @@
       tags = #{tags,jdbcType=VARCHAR},
       keywords = #{keywords,jdbcType=VARCHAR},
       summary = #{summary,jdbcType=VARCHAR},
+      pub_time = #{pubTime,jdbcType=TIMESTAMP},
       version = #{version,jdbcType=INTEGER}
     where id = #{id,jdbcType=VARCHAR}
   </update>

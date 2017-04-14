@@ -14,7 +14,7 @@ import lombok.ToString;
 @Data
 @ToString
 public class WebsiteSpider implements Serializable {
-    private static final long serialVersionUID = -3372008410156739961L;
+    private static final long serialVersionUID = -6251569631554047465L;
     /**
      * 主键
      */
@@ -100,6 +100,11 @@ public class WebsiteSpider implements Serializable {
      * 摘要
      */
     private String summary;
+
+    /**
+     * 发布时间
+     */
+    private Date pubTime;
 
     /**
      * 版本号
@@ -224,6 +229,13 @@ public class WebsiteSpider implements Serializable {
      **/
     @JsonIgnore
     private String summaryExpression;
+
+    /**
+     * pubTime属性对应的表达式属性，
+     * 目前用来支持update set 字段=表达式(如:'字段+1')这种场景
+     **/
+    @JsonIgnore
+    private String pubTimeExpression;
 
     /**
      * version属性对应的表达式属性，

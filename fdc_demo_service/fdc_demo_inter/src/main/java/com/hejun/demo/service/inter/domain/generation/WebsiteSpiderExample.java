@@ -1276,6 +1276,66 @@ public class WebsiteSpiderExample {
             return (Criteria) this;
         }
 
+        public Criteria andPubTimeIsNull() {
+            addCriterion("pub_time is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPubTimeIsNotNull() {
+            addCriterion("pub_time is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPubTimeEqualTo(Date value) {
+            addCriterion("pub_time =", value, "pubTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andPubTimeNotEqualTo(Date value) {
+            addCriterion("pub_time <>", value, "pubTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andPubTimeGreaterThan(Date value) {
+            addCriterion("pub_time >", value, "pubTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andPubTimeGreaterThanOrEqualTo(Date value) {
+            addCriterion("pub_time >=", value, "pubTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andPubTimeLessThan(Date value) {
+            addCriterion("pub_time <", value, "pubTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andPubTimeLessThanOrEqualTo(Date value) {
+            addCriterion("pub_time <=", value, "pubTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andPubTimeIn(List<Date> values) {
+            addCriterion("pub_time in", values, "pubTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andPubTimeNotIn(List<Date> values) {
+            addCriterion("pub_time not in", values, "pubTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andPubTimeBetween(Date value1, Date value2) {
+            addCriterion("pub_time between", value1, value2, "pubTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andPubTimeNotBetween(Date value1, Date value2) {
+            addCriterion("pub_time not between", value1, value2, "pubTime");
+            return (Criteria) this;
+        }
+
         public Criteria andVersionIsNull() {
             addCriterion("version is null");
             return (Criteria) this;

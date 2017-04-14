@@ -27,4 +27,9 @@ public interface WebsiteSpiderBussiness {
      * 新浪科技爬虫
      */
     void sinaITSpider();
+
+    /**
+     * 腾讯科技爬虫
+     */
+    void qqITSpider();
 }

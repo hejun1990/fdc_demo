@@ -12,16 +12,16 @@ import com.hejun.demo.service.inter.service.sitemanager.WebsiteSpiderService;
 import com.hejun.demo.web.bussiness.WebsiteSpiderBussiness;
 import com.hejun.demo.web.enumeration.SpiderEntry;
 import com.hejun.demo.web.utils.HttpUtil;
-import com.hejun.demo.web.utils.UnicodeUtil;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by hejun-FDC on 2017/4/12.
@@ -132,6 +132,7 @@ public class WebsiteSpiderBussinessImpl implements WebsiteSpiderBussiness {
                 }
                 logger.info("搜狐科技爬虫爬完第{}页。", page);
             }
+            logger.info("搜狐科技爬虫任务完成。");
         } catch (Exception e) {
             logger.info("搜狐科技爬虫爬到第{}页出错：{}", page, e.toString());
         }
@@ -225,7 +226,7 @@ public class WebsiteSpiderBussinessImpl implements WebsiteSpiderBussiness {
                                 websiteSpider.setAuthor(author);
                                 String imgJsonStr = article.getString("img");
                                 char imgFirstChar = imgJsonStr.charAt(0);
-                                if(imgFirstChar == '{') {
+                                if (imgFirstChar == '{') {
                                     JSONObject img = article.getJSONObject("img");
                                     String u = img.getString("u");
                                     if (StringUtils.isNotEmpty(u)) {
@@ -244,7 +245,7 @@ public class WebsiteSpiderBussinessImpl implements WebsiteSpiderBussiness {
                                 // 处理关键字信息
                                 String[] keywordsArray = keywords.split(",");
                                 for (String word : keywordsArray) {
-                                    Map<String, Object> keywordsParams = new HashMap<String, Object>();
+                                    Map<String, Object> keywordsParams = new HashMap<>();
                                     keywordsParams.put("keywords", word);
                                     int keywordsStoreCount = keywordsStoreService.countByCondition(keywordsParams);
                                     // 如果关键字库中没有该关键字，则插入新关键字
@@ -262,8 +263,118 @@ public class WebsiteSpiderBussinessImpl implements WebsiteSpiderBussiness {
                 }
                 logger.info("新浪科技爬虫爬完第{}页。", page);
             }
+            logger.info("新浪科技爬虫任务完成。");
         } catch (Exception e) {
             logger.error("新浪科技爬虫爬到第{}页出错：{}", page, e.toString());
+        }
+    }
+
+    @Override
+    public void qqITSpider() {
+        //原始爬虫地址
+        String ori_spiderUrl = SpiderEntry.QQ.getSpiderUrl();
+        int totalDay = 365 * 3; // 从当天往前爬3年的数据
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        for (int amount = 0; amount < totalDay; amount++) {
+            Map<String, String> replaceMap = getQQSpiderUrlReplace(-amount, formatter);
+            handleQQITContext(ori_spiderUrl, replaceMap, 1);
+        }
+        logger.info("腾讯科技爬虫任务完成。");
+    }
+
+    /**
+     * 获取腾讯科技地址动态参数
+     *
+     * @param amount
+     * @param formatter
+     * @return
+     */
+    private Map<String, String> getQQSpiderUrlReplace(int amount, SimpleDateFormat formatter) {
+        Map<String, String> map = new HashMap<>();
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(calendar.DATE, amount); //把日期往后增加一天.整数往后推,负数往前移动
+        String dateStr = formatter.format(calendar.getTime());
+        String[] dataArr = dateStr.split("-");
+        String year = dataArr[0];
+        String month = dataArr[1];
+        String day = dataArr[2];
+        map.put("year", year);
+        map.put("month", month);
+        map.put("day", day);
+        map.put("year_month", year + month);
+        map.put("year_month_day", year + month + day);
+        return map;
+    }
+
+    /**
+     * 判断腾讯科技列表页是否有下一页
+     *
+     * @param content
+     * @return
+     */
+    private boolean isNextPage(String content) {
+        String pattern = "<span class=\"na\">下一页&gt;</span>";
+        Pattern p = Pattern.compile(pattern);
+        Matcher m = p.matcher(content);
+        return !m.find();
+    }
+
+    /**
+     * 处理腾讯科技列表网页信息
+     *
+     * @param ori_spiderUrl
+     * @param dateMap
+     * @param page
+     */
+    private void handleQQITContext(String ori_spiderUrl, Map<String, String> dateMap, int page) {
+        try {
+            String spiderUrl;
+            if (page > 1) {
+                spiderUrl = ori_spiderUrl.replace("{YEAR_MONTH}", dateMap.get("year_month"))
+                        .replace("{DAY_PAGE}", dateMap.get("day") + "_" + page);
+            } else {
+                spiderUrl = ori_spiderUrl.replace("{YEAR_MONTH}", dateMap.get("year_month"))
+                        .replace("{DAY_PAGE}", dateMap.get("day"));
+            }
+            String content = HttpUtil.httpClientGet(spiderUrl);
+            if (StringUtils.isNotEmpty(content)) {
+                String pattern = "<a target=\"_blank\" href=\"(http://tech.qq.com/a/"
+                        + dateMap.get("year_month_day") + "/(?:\\w)+.htm)\">(.*?)</a>";
+                Pattern p = Pattern.compile(pattern);
+                Matcher m = p.matcher(content);
+                while (m.find()) {
+                    String url = m.group(1);
+                    String title = m.group(2);
+                    Map<String, Object> websiteSpiderParams = new HashMap<>();
+                    websiteSpiderParams.put("originalUrl", url);
+                    int websiteSpiderCount = websiteSpiderService.countByCondition(websiteSpiderParams);
+                    // 如果访问网址重复，跳过本次循环
+                    if (websiteSpiderCount > 0) {
+                        continue;
+                    }
+                    WebsiteSpider websiteSpider = new WebsiteSpider();
+                    websiteSpider.setOriginalUrl(url);
+                    websiteSpider.setOriginalSiteCode(SpiderEntry.QQ.getCode());
+                    websiteSpider.setOriginalSiteName(SpiderEntry.QQ.getName());
+                    websiteSpider.setTitle(title);
+                    websiteSpider.setAuthor(SpiderEntry.QQ.getName());
+                    websiteSpiderService.insertSelective(websiteSpider);
+                }
+                Object[] logVals = {dateMap.get("year"), dateMap.get("month"),
+                        dateMap.get("day"), page};
+                logger.info("腾讯科技爬虫爬完{}年{}月{}日第{}页。", logVals);
+                if (isNextPage(content)) {
+                    handleQQITContext(ori_spiderUrl, dateMap, ++page);
+                }
+            } else {
+                Object[] logVals = {dateMap.get("year"), dateMap.get("month"),
+                        dateMap.get("day"), page};
+                logger.warn("腾讯科技爬虫无法取到{}年{}月{}日第{}页数据。", logVals);
+            }
+        } catch (Exception e) {
+            Object[] logVals = {dateMap.get("year"), dateMap.get("month"),
+                    dateMap.get("day"), page, e.toString()};
+            logger.error("腾讯科技爬虫爬完{}年{}月{}日第{}页报错：。", logVals);
         }
     }
 }

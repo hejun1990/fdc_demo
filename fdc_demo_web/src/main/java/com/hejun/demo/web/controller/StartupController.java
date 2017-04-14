@@ -38,5 +38,12 @@ public class StartupController {
                 websiteSpiderBussiness.sinaITSpider();
             }
         });
+        fixedThreadPool.execute(new Runnable() {
+            @Override
+            public void run() {
+                // 腾讯科技资讯
+                websiteSpiderBussiness.qqITSpider();
+            }
+        });
     }
 }
