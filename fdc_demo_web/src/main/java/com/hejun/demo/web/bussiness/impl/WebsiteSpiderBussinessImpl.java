@@ -136,7 +136,7 @@ public class WebsiteSpiderBussinessImpl implements WebsiteSpiderBussiness {
             long endTime = System.currentTimeMillis();
             logger.info("搜狐科技爬虫任务完成，耗时{}分{}秒。",
                     (endTime - startTime) / (1000 * 60),
-                    (endTime - startTime) % (1000 * 60));
+                    ((endTime - startTime) % (1000 * 60)) / 1000);
         } catch (Exception e) {
             logger.info("搜狐科技爬虫爬到第{}页出错：{}", page, e.toString());
         }
@@ -271,7 +271,7 @@ public class WebsiteSpiderBussinessImpl implements WebsiteSpiderBussiness {
             long endTime = System.currentTimeMillis();
             logger.info("新浪科技爬虫任务完成，耗时{}分{}秒。",
                     (endTime - startTime) / (1000 * 60),
-                    (endTime - startTime) % (1000 * 60));
+                    ((endTime - startTime) % (1000 * 60)) / 1000);
         } catch (Exception e) {
             logger.error("新浪科技爬虫爬到第{}页出错：{}", page, e.toString());
         }
@@ -291,7 +291,7 @@ public class WebsiteSpiderBussinessImpl implements WebsiteSpiderBussiness {
         long endTime = System.currentTimeMillis();
         logger.info("腾讯科技爬虫任务完成，耗时{}分{}秒。",
                 (endTime - startTime) / (1000 * 60),
-                (endTime - startTime) % (1000 * 60));
+                ((endTime - startTime) % (1000 * 60)) / 1000);
     }
 
     /**
