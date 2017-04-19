@@ -41,8 +41,8 @@
             <property name="useActualColumnNames" value="false"/>
         </table>
 
-        <!--<table tableName="article_content" domainObjectName="ArticleContent">-->
-            <!--<property name="useActualColumnNames" value="false"/>-->
-        <!--</table>-->
+        <table tableName="article" domainObjectName="Article">
+            <property name="useActualColumnNames" value="false"/>
+        </table>
     </context>
 </generatorConfiguration>

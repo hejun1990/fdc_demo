@@ -16,7 +16,6 @@
     <result column="original_url" property="originalUrl" jdbcType="VARCHAR" />
     <result column="pic_url" property="picUrl" jdbcType="VARCHAR" />
     <result column="analysis_count" property="analysisCount" jdbcType="INTEGER" />
-    <result column="tags" property="tags" jdbcType="VARCHAR" />
     <result column="keywords" property="keywords" jdbcType="VARCHAR" />
     <result column="summary" property="summary" jdbcType="VARCHAR" />
     <result column="pub_time" property="pubTime" jdbcType="TIMESTAMP" />
@@ -85,7 +84,7 @@
   <sql id="Base_Column_List" >
     id, gmt_created, gmt_modified, created_by, modified_by, is_del, title, vice_title, 
     author, original_site_code, original_site_name, original_url, pic_url, analysis_count, 
-    tags, keywords, summary, pub_time, version
+    keywords, summary, pub_time, version
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.hejun.demo.service.inter.domain.generation.WebsiteSpiderExample" >
     select
@@ -132,16 +131,16 @@
       created_by, modified_by, is_del, 
       title, vice_title, author, 
       original_site_code, original_site_name, original_url, 
-      pic_url, analysis_count, tags, 
-      keywords, summary, pub_time, 
-      version)
+      pic_url, analysis_count, keywords, 
+      summary, pub_time, version
+      )
     values (#{id,jdbcType=VARCHAR}, #{gmtCreated,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, 
       #{createdBy,jdbcType=VARCHAR}, #{modifiedBy,jdbcType=VARCHAR}, #{isDel,jdbcType=BIT}, 
       #{title,jdbcType=VARCHAR}, #{viceTitle,jdbcType=VARCHAR}, #{author,jdbcType=VARCHAR}, 
       #{originalSiteCode,jdbcType=TINYINT}, #{originalSiteName,jdbcType=VARCHAR}, #{originalUrl,jdbcType=VARCHAR}, 
-      #{picUrl,jdbcType=VARCHAR}, #{analysisCount,jdbcType=INTEGER}, #{tags,jdbcType=VARCHAR}, 
-      #{keywords,jdbcType=VARCHAR}, #{summary,jdbcType=VARCHAR}, #{pubTime,jdbcType=TIMESTAMP}, 
-      #{version,jdbcType=INTEGER})
+      #{picUrl,jdbcType=VARCHAR}, #{analysisCount,jdbcType=INTEGER}, #{keywords,jdbcType=VARCHAR}, 
+      #{summary,jdbcType=VARCHAR}, #{pubTime,jdbcType=TIMESTAMP}, #{version,jdbcType=INTEGER}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.hejun.demo.service.inter.domain.generation.WebsiteSpider" useGeneratedKeys="true" keyProperty="id" >
     insert into website_spider
@@ -187,9 +186,6 @@
       </if>
       <if test="analysisCount != null" >
         analysis_count,
-      </if>
-      <if test="tags != null" >
-        tags,
       </if>
       <if test="keywords != null" >
         keywords,
@@ -246,9 +242,6 @@
       </if>
       <if test="analysisCount != null" >
         #{analysisCount,jdbcType=INTEGER},
-      </if>
-      <if test="tags != null" >
-        #{tags,jdbcType=VARCHAR},
       </if>
       <if test="keywords != null" >
         #{keywords,jdbcType=VARCHAR},
@@ -352,12 +345,6 @@
         <if test="record.analysisCountExpression!=null" >
           analysis_count = ${record.analysisCountExpression},
         </if>
-        <if test="record.tags!=null and record.tagsExpression==null" >
-          tags = #{record.tags,jdbcType=VARCHAR},
-        </if>
-        <if test="record.tagsExpression!=null" >
-          tags = ${record.tagsExpression},
-        </if>
         <if test="record.keywords!=null and record.keywordsExpression==null" >
           keywords = #{record.keywords,jdbcType=VARCHAR},
         </if>
@@ -404,7 +391,6 @@
       original_url = #{record.originalUrl,jdbcType=VARCHAR},
       pic_url = #{record.picUrl,jdbcType=VARCHAR},
       analysis_count = #{record.analysisCount,jdbcType=INTEGER},
-      tags = #{record.tags,jdbcType=VARCHAR},
       keywords = #{record.keywords,jdbcType=VARCHAR},
       summary = #{record.summary,jdbcType=VARCHAR},
       pub_time = #{record.pubTime,jdbcType=TIMESTAMP},
@@ -495,12 +481,6 @@
         <if test="record.analysisCountExpression!=null" >
           analysis_count = ${record.analysisCountExpression},
         </if>
-        <if test="record.tags!=null and record.tagsExpression==null" >
-          tags = #{record.tags,jdbcType=VARCHAR},
-        </if>
-        <if test="record.tagsExpression!=null" >
-          tags = ${record.tagsExpression},
-        </if>
         <if test="record.keywords!=null and record.keywordsExpression==null" >
           keywords = #{record.keywords,jdbcType=VARCHAR},
         </if>
@@ -544,7 +524,6 @@
       original_url = #{originalUrl,jdbcType=VARCHAR},
       pic_url = #{picUrl,jdbcType=VARCHAR},
       analysis_count = #{analysisCount,jdbcType=INTEGER},
-      tags = #{tags,jdbcType=VARCHAR},
       keywords = #{keywords,jdbcType=VARCHAR},
       summary = #{summary,jdbcType=VARCHAR},
       pub_time = #{pubTime,jdbcType=TIMESTAMP},

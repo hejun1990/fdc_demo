@@ -13,7 +13,5 @@
     <!-- 生成远程服务代理，可以和本地bean一样使用 -->
     <dubbo:reference id="articleService" interface="com.hejun.demo.service.inter.service.sitemanager.ArticleService" />
     <dubbo:reference id="websiteSpiderService" interface="com.hejun.demo.service.inter.service.sitemanager.WebsiteSpiderService" />
-    <dubbo:reference id="tagStoreService" interface="com.hejun.demo.service.inter.service.sitemanager.TagStoreService" />
-    <dubbo:reference id="aticleTagService" interface="com.hejun.demo.service.inter.service.sitemanager.ArticleTagService" />
     <dubbo:reference id="keywordsStoreService" interface="com.hejun.demo.service.inter.service.sitemanager.KeywordsStoreService" />
 </beans>

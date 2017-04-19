@@ -3,11 +3,9 @@ package com.hejun.demo.web.bussiness.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.hejun.demo.service.inter.domain.generation.KeywordsStore;
-import com.hejun.demo.service.inter.domain.generation.TagStore;
 import com.hejun.demo.service.inter.domain.generation.WebsiteSpider;
 import com.hejun.demo.service.inter.domain.generation.WebsiteSpiderExample;
 import com.hejun.demo.service.inter.service.sitemanager.KeywordsStoreService;
-import com.hejun.demo.service.inter.service.sitemanager.TagStoreService;
 import com.hejun.demo.service.inter.service.sitemanager.WebsiteSpiderService;
 import com.hejun.demo.web.bussiness.WebsiteSpiderBussiness;
 import com.hejun.demo.web.enumeration.SpiderEntry;
@@ -32,8 +30,6 @@ public class WebsiteSpiderBussinessImpl implements WebsiteSpiderBussiness {
 
     @Autowired
     private WebsiteSpiderService websiteSpiderService;
-    @Autowired
-    private TagStoreService tagStoreService;
     @Autowired
     private KeywordsStoreService keywordsStoreService;
 
@@ -104,25 +100,25 @@ public class WebsiteSpiderBussinessImpl implements WebsiteSpiderBussiness {
                                 // 处理标签
                                 JSONArray tags = jsonObject.getJSONArray("tags");
                                 if (tags != null && tags.size() > 0) {
-                                    StringBuilder tagsBuilder = new StringBuilder();
+                                    StringBuilder keywordsBuilder = new StringBuilder();
                                     for (int j = 0; j < tags.size(); j++) {
                                         JSONObject tag = tags.getJSONObject(j);
                                         String tagName = tag.getString("name");
                                         if (j != 0) {
-                                            tagsBuilder.append(",");
+                                            keywordsBuilder.append(",");
                                         }
-                                        tagsBuilder.append(tagName);
-                                        Map<String, Object> tagsParams = new HashMap<>();
-                                        tagsParams.put("tagName", tagName);
-                                        int tagStoreCount = tagStoreService.countByCondition(tagsParams);
-                                        // 如果标签库中没有该标签，则插入新标签
-                                        if (tagStoreCount == 0) {
-                                            TagStore tagStore = new TagStore();
-                                            tagStore.setTagName(tagName);
-                                            tagStoreService.insertSelective(tagStore);
+                                        keywordsBuilder.append(tagName);
+                                        Map<String, Object> keywordsParams = new HashMap<>();
+                                        keywordsParams.put("keywords", tagName);
+                                        int keywordsStoreCount = keywordsStoreService.countByCondition(keywordsParams);
+                                        // 如果关键字库中没有该关键字，则插入新关键字
+                                        if (keywordsStoreCount == 0) {
+                                            KeywordsStore keywordsStore = new KeywordsStore();
+                                            keywordsStore.setKeywords(tagName);
+                                            keywordsStoreService.insertSelective(keywordsStore);
                                         }
                                     }
-                                    websiteSpider.setTags(tagsBuilder.toString());
+                                    websiteSpider.setKeywords(keywordsBuilder.toString());
                                 }
                                 websiteSpiderService.insertSelective(websiteSpider);
                             }

@@ -1,5 +1,6 @@
 package com.hejun.demo.web.controller;
 
+import com.hejun.demo.web.bussiness.ArticleAnalysisBussiness;
 import com.hejun.demo.web.bussiness.WebsiteSpiderBussiness;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,10 +21,20 @@ public class StartupController {
     @Autowired
     private WebsiteSpiderBussiness websiteSpiderBussiness;
 
+    @Autowired
+    private ArticleAnalysisBussiness articleAnalysisBussiness;
+
+    private ExecutorService fixedThreadPool;
+
     @PostConstruct
-    public void WebSpider() {
+    public void startUp() {
+        fixedThreadPool = Executors.newFixedThreadPool(4);
+//        webSpider();
+        webArticleAnalysis();
+    }
+
+    private void webSpider() {
         logger.info("开启网络爬虫");
-        ExecutorService fixedThreadPool = Executors.newFixedThreadPool(4);
         fixedThreadPool.execute(new Runnable() {
             @Override
             public void run() {
@@ -45,5 +56,10 @@ public class StartupController {
                 websiteSpiderBussiness.qqITSpider();
             }
         });
+    }
+
+    private void webArticleAnalysis() {
+        logger.info("开始爬取文章分析");
+        articleAnalysisBussiness.getWebContent();
     }
 }

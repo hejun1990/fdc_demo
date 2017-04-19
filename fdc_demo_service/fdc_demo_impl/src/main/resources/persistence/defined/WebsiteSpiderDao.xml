@@ -16,7 +16,6 @@
     <result column="original_url" property="originalUrl" jdbcType="VARCHAR" />
     <result column="pic_url" property="picUrl" jdbcType="VARCHAR" />
     <result column="analysis_count" property="analysisCount" jdbcType="INTEGER" />
-    <result column="tags" property="tags" jdbcType="VARCHAR" />
     <result column="keywords" property="keywords" jdbcType="VARCHAR" />
     <result column="summary" property="summary" jdbcType="VARCHAR" />
     <result column="pub_time" property="pubTime" jdbcType="TIMESTAMP" />
@@ -25,7 +24,7 @@
   <sql id="Base_Column_List" >
     id, gmt_created, gmt_modified, created_by, modified_by, is_del, title, vice_title, 
     author, original_site_code, original_site_name, original_url, pic_url, analysis_count, 
-    tags, keywords, summary, pub_time, version
+    keywords, summary, pub_time, version
   </sql>
   <select id="selectPageByCondition" resultMap="BaseResultMap" parameterType="java.util.Map" >
     select
@@ -55,9 +54,6 @@
       </if>
       <if test="analysisCount != null">
         and analysis_count = #{analysisCount}
-      </if>
-      <if test="tags != null">
-        and tags = #{tags}
       </if>
       <if test="keywords != null">
         and keywords = #{keywords}
@@ -104,9 +100,6 @@
       </if>
       <if test="analysisCount != null">
         and analysis_count = #{analysisCount}
-      </if>
-      <if test="tags != null">
-        and tags = #{tags}
       </if>
       <if test="keywords != null">
         and keywords = #{keywords}
