@@ -28,8 +28,8 @@ public class StartupController {
 
     @PostConstruct
     public void startUp() {
-        fixedThreadPool = Executors.newFixedThreadPool(4);
-//        webSpider();
+        fixedThreadPool = Executors.newFixedThreadPool(10);
+        webSpider();
         webArticleAnalysis();
     }
 
@@ -59,7 +59,12 @@ public class StartupController {
     }
 
     private void webArticleAnalysis() {
-        logger.info("开始爬取文章分析");
-        articleAnalysisBussiness.getWebContent();
+        logger.info("开始对爬取网页进行正文解析");
+        fixedThreadPool.execute(new Runnable() {
+            @Override
+            public void run() {
+                articleAnalysisBussiness.extractWebContent();
+            }
+        });
     }
 }

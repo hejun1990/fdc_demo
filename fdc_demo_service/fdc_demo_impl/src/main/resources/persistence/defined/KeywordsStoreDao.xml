@@ -18,24 +18,21 @@
       <include refid="Base_Column_List" />
     from keywords_store
     <where>
-      <if test="keywords != null">
-        and keywords = #{keywords}
+      <if test="record.keywords != null">
+        and keywords = #{record.keywords}
       </if>
       and is_del = 0
     </where>
     ORDER BY gmt_created DESC
-    <if test="page != null and size != null">
-      limit ${page}, ${size}
-    </if>
-    <if test="forUpdate" >
-      for update
+    <if test="paging != null and paging.start != null and paging.pageSize != null">
+      limit ${paging.start}, ${paging.pageSize}
     </if>
   </select>
   <select id="countByCondition" parameterType="java.util.Map" resultType="java.lang.Integer" >
     select count(*) from keywords_store
     <where>
-      <if test="keywords != null">
-        and keywords = #{keywords}
+      <if test="record.keywords != null">
+        and keywords = #{record.keywords}
       </if>
       and is_del = 0
     </where>

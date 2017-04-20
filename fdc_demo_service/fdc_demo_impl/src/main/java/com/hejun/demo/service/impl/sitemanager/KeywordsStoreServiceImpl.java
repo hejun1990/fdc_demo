@@ -2,6 +2,7 @@ package com.hejun.demo.service.impl.sitemanager;
 
 import com.hejun.demo.service.inter.dao.defined.KeywordsStoreDao;
 import com.hejun.demo.service.inter.dao.generation.KeywordsStoreMapper;
+import com.hejun.demo.service.inter.domain.defined.Paging;
 import com.hejun.demo.service.inter.domain.generation.KeywordsStore;
 import com.hejun.demo.service.inter.service.sitemanager.KeywordsStoreService;
 import org.apache.ibatis.annotations.Param;
@@ -40,7 +41,7 @@ public class KeywordsStoreServiceImpl implements KeywordsStoreService {
     }
 
     @Override
-    public List<KeywordsStore> selectPageByCondition(Map<String, Object> condition) {
-        return keywordsStoreDao.selectPageByCondition(condition);
+    public List<KeywordsStore> selectPageByCondition(Map<String, Object> record, Paging paging) {
+        return keywordsStoreDao.selectPageByCondition(record, paging);
     }
 }

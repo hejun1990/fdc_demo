@@ -5,7 +5,7 @@ package com.hejun.demo.web.bussiness;
  */
 public interface ArticleAnalysisBussiness {
     /**
-     * 获取网页正文
+     * 提取网页正文
      */
-    void getWebContent();
+    void extractWebContent();
 }

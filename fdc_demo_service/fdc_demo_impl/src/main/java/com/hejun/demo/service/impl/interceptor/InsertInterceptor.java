@@ -25,20 +25,29 @@ public class InsertInterceptor {
             Class cla = arg.getClass();
             if (cla.isAnnotationPresent(Domain.class)) {
                 try {
-                    if (MethodUtils.invokeMethod(arg, "getGmtCreated", null) == null) {
-                        MethodUtils.invokeMethod(arg, "setGmtCreated", new Date());
-                    }
-                    if (MethodUtils.invokeMethod(arg, "getGmtModified", null) == null) {
-                        MethodUtils.invokeMethod(arg, "setGmtModified", new Date());
-                    }
-                    if (MethodUtils.invokeMethod(arg, "getCreatedBy", null) == null) {
-                        MethodUtils.invokeMethod(arg, "setCreatedBy", createName);
-                    }
-                    if (MethodUtils.invokeMethod(arg, "getModifiedBy", null) == null) {
-                        MethodUtils.invokeMethod(arg, "setModifiedBy", createName);
-                    }
-
                     Field[] fields = cla.getDeclaredFields();
+                    boolean commonFlag = false;
+                    for (Field field : fields) {
+                        String name = field.getName();
+                        if ("gmtCreated".equals(name)) {
+                            commonFlag = true;
+                            break;
+                        }
+                    }
+                    if (commonFlag) {
+                        if (MethodUtils.invokeMethod(arg, "getGmtCreated", null) == null) {
+                            MethodUtils.invokeMethod(arg, "setGmtCreated", new Date());
+                        }
+                        if (MethodUtils.invokeMethod(arg, "getGmtModified", null) == null) {
+                            MethodUtils.invokeMethod(arg, "setGmtModified", new Date());
+                        }
+                        if (MethodUtils.invokeMethod(arg, "getCreatedBy", null) == null) {
+                            MethodUtils.invokeMethod(arg, "setCreatedBy", createName);
+                        }
+                        if (MethodUtils.invokeMethod(arg, "getModifiedBy", null) == null) {
+                            MethodUtils.invokeMethod(arg, "setModifiedBy", createName);
+                        }
+                    }
                     for (Field field : fields) {
                         if (field.isAnnotationPresent(BizId.class)) {
                             String name = field.getName();

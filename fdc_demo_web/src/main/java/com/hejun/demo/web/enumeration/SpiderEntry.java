@@ -10,9 +10,8 @@ public enum SpiderEntry {
             "http://v2.sohu.com/public-api/feed?scene=CHANNEL&sceneId=30&page={PAGE}&size=20&callback=hj",
             "http://www.sohu.com/a/{ID}_{AUTHORID}"),
     SINA(2, "新浪科技",
-            "http://feed.mix.sina.com.cn/api/roll/get?pageid=1&lid=21&num=30&versionNumber=1.2.8&page={PAGE}&encode=utf-8&callback=feedCardJsonpCallback",
-            ""),
-    QQ(3, "腾讯科技", "http://tech.qq.com/l/{YEAR_MONTH}/scroll_{DAY_PAGE}.htm", "");
+            "http://feed.mix.sina.com.cn/api/roll/get?pageid=1&lid=21&num=30&versionNumber=1.2.8&page={PAGE}&encode=utf-8&callback=feedCardJsonpCallback"),
+    QQ(3, "腾讯科技", "http://tech.qq.com/l/{YEAR_MONTH}/scroll_{DAY_PAGE}.htm");
 
     /**
      * 网站编号
@@ -31,7 +30,13 @@ public enum SpiderEntry {
      */
     private String visitUrl;
 
-    private SpiderEntry(int code, String name, String spiderUrl, String visitUrl) {
+    SpiderEntry(int code, String name, String spiderUrl) {
+        this.code = code;
+        this.name = name;
+        this.spiderUrl = spiderUrl;
+    }
+
+    SpiderEntry(int code, String name, String spiderUrl, String visitUrl) {
         this.code = code;
         this.name = name;
         this.spiderUrl = spiderUrl;
@@ -40,10 +45,6 @@ public enum SpiderEntry {
 
     public int getCode() {
         return code;
-    }
-
-    public void setCode(int code) {
-        this.code = code;
     }
 
     public String getName() {
@@ -58,15 +59,7 @@ public enum SpiderEntry {
         return spiderUrl;
     }
 
-    public void setSpiderUrl(String spiderUrl) {
-        this.spiderUrl = spiderUrl;
-    }
-
     public String getVisitUrl() {
         return visitUrl;
-    }
-
-    public void setVisitUrl(String visitUrl) {
-        this.visitUrl = visitUrl;
     }
 }

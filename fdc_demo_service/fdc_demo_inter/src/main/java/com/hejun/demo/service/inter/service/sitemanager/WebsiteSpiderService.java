@@ -1,8 +1,10 @@
 package com.hejun.demo.service.inter.service.sitemanager;
 
+import com.hejun.demo.service.inter.domain.defined.Paging;
+import com.hejun.demo.service.inter.domain.generation.Article;
+import com.hejun.demo.service.inter.domain.generation.ArticleContent;
 import com.hejun.demo.service.inter.domain.generation.WebsiteSpider;
 import com.hejun.demo.service.inter.domain.generation.WebsiteSpiderExample;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -19,9 +21,23 @@ public interface WebsiteSpiderService {
 
     List<WebsiteSpider> selectByExample(WebsiteSpiderExample example);
 
-    boolean updateByPrimaryKeySelective(@Param("record") WebsiteSpider record);
+    boolean updateByPrimaryKeySelective(WebsiteSpider record);
 
-    int countByCondition(Map<String, Object> condition);
+    int countByCondition(Map<String, Object> record);
 
-    List<WebsiteSpider> selectPageByCondition(Map<String, Object> condition);
+    List<WebsiteSpider> selectPageByCondition(Map<String, Object> record, Paging paging);
+
+    boolean updateByConditionSelective(WebsiteSpider record, WebsiteSpider example);
+
+    boolean deleteByConditionSelective(WebsiteSpider record, WebsiteSpider example);
+
+    /**
+     * 处理爬取文章的正文
+     *
+     * @param websiteSpider
+     * @param article
+     * @param articleContent
+     * @return
+     */
+    boolean handleSpiderContent(WebsiteSpider websiteSpider, Article article, ArticleContent articleContent);
 }

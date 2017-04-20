@@ -277,7 +277,7 @@ public class WebsiteSpiderBussinessImpl implements WebsiteSpiderBussiness {
     public void qqITSpider() {
         //原始爬虫地址
         String ori_spiderUrl = SpiderEntry.QQ.getSpiderUrl();
-        int totalDay = 365 * 3; // 从当天往前爬3年的数据
+        int totalDay = 365 * 3; // 从当天开始爬取过去3年的历史数据
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         long startTime = System.currentTimeMillis();
         for (int amount = 0; amount < totalDay; amount++) {

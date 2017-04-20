@@ -1,116 +1,217 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.hejun.demo.service.inter.dao.defined.WebsiteSpiderDao" >
-  <resultMap id="BaseResultMap" type="com.hejun.demo.service.inter.domain.generation.WebsiteSpider" >
-    <id column="id" property="id" jdbcType="VARCHAR" />
-    <result column="gmt_created" property="gmtCreated" jdbcType="TIMESTAMP" />
-    <result column="gmt_modified" property="gmtModified" jdbcType="TIMESTAMP" />
-    <result column="created_by" property="createdBy" jdbcType="VARCHAR" />
-    <result column="modified_by" property="modifiedBy" jdbcType="VARCHAR" />
-    <result column="is_del" property="isDel" jdbcType="BIT" />
-    <result column="title" property="title" jdbcType="VARCHAR" />
-    <result column="vice_title" property="viceTitle" jdbcType="VARCHAR" />
-    <result column="author" property="author" jdbcType="VARCHAR" />
-    <result column="original_site_code" property="originalSiteCode" jdbcType="TINYINT" />
-    <result column="original_site_name" property="originalSiteName" jdbcType="VARCHAR" />
-    <result column="original_url" property="originalUrl" jdbcType="VARCHAR" />
-    <result column="pic_url" property="picUrl" jdbcType="VARCHAR" />
-    <result column="analysis_count" property="analysisCount" jdbcType="INTEGER" />
-    <result column="keywords" property="keywords" jdbcType="VARCHAR" />
-    <result column="summary" property="summary" jdbcType="VARCHAR" />
-    <result column="pub_time" property="pubTime" jdbcType="TIMESTAMP" />
-    <result column="version" property="version" jdbcType="INTEGER" />
-  </resultMap>
-  <sql id="Base_Column_List" >
+<mapper namespace="com.hejun.demo.service.inter.dao.defined.WebsiteSpiderDao">
+    <resultMap id="BaseResultMap" type="com.hejun.demo.service.inter.domain.generation.WebsiteSpider">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="gmt_created" property="gmtCreated" jdbcType="TIMESTAMP"/>
+        <result column="gmt_modified" property="gmtModified" jdbcType="TIMESTAMP"/>
+        <result column="created_by" property="createdBy" jdbcType="VARCHAR"/>
+        <result column="modified_by" property="modifiedBy" jdbcType="VARCHAR"/>
+        <result column="is_del" property="isDel" jdbcType="BIT"/>
+        <result column="title" property="title" jdbcType="VARCHAR"/>
+        <result column="vice_title" property="viceTitle" jdbcType="VARCHAR"/>
+        <result column="author" property="author" jdbcType="VARCHAR"/>
+        <result column="original_site_code" property="originalSiteCode" jdbcType="TINYINT"/>
+        <result column="original_site_name" property="originalSiteName" jdbcType="VARCHAR"/>
+        <result column="original_url" property="originalUrl" jdbcType="VARCHAR"/>
+        <result column="pic_url" property="picUrl" jdbcType="VARCHAR"/>
+        <result column="analysis_count" property="analysisCount" jdbcType="INTEGER"/>
+        <result column="keywords" property="keywords" jdbcType="VARCHAR"/>
+        <result column="summary" property="summary" jdbcType="VARCHAR"/>
+        <result column="pub_time" property="pubTime" jdbcType="TIMESTAMP"/>
+        <result column="version" property="version" jdbcType="INTEGER"/>
+    </resultMap>
+    <sql id="Base_Column_List">
     id, gmt_created, gmt_modified, created_by, modified_by, is_del, title, vice_title, 
     author, original_site_code, original_site_name, original_url, pic_url, analysis_count, 
     keywords, summary, pub_time, version
   </sql>
-  <select id="selectPageByCondition" resultMap="BaseResultMap" parameterType="java.util.Map" >
-    select
-    <include refid="Base_Column_List" />
-    from website_spider
-    <where>
-      <if test="title != null">
-        and title = #{title}
-      </if>
-      <if test="viceTitle != null">
-        and vice_title = #{viceTitle}
-      </if>
-      <if test="author != null">
-        and author = #{author}
-      </if>
-      <if test="originalSiteCode != null">
-        and original_site_code = #{originalSiteCode}
-      </if>
-      <if test="originalSiteName != null">
-        and original_site_name = #{originalSiteName}
-      </if>
-      <if test="originalUrl != null">
-        and original_url = #{originalUrl}
-      </if>
-      <if test="picUrl != null">
-        and pic_url = #{picUrl}
-      </if>
-      <if test="analysisCount != null">
-        and analysis_count = #{analysisCount}
-      </if>
-      <if test="keywords != null">
-        and keywords = #{keywords}
-      </if>
-      <if test="pubTime != null">
-        and pubTime = #{pub_time}
-      </if>
-      <if test="version != null">
-        and version = #{version}
-      </if>
-      and is_del = 0
-    </where>
-    ORDER BY gmt_created DESC
-    <if test="page != null and size != null">
-      limit ${page}, ${size}
-    </if>
-    <if test="forUpdate" >
-      for update
-    </if>
-  </select>
-  <select id="countByCondition" parameterType="java.util.Map" resultType="java.lang.Integer" >
-    select count(*) from website_spider
-    <where>
-      <if test="title != null">
-        and title = #{title}
-      </if>
-      <if test="viceTitle != null">
-        and vice_title = #{viceTitle}
-      </if>
-      <if test="author != null">
-        and author = #{author}
-      </if>
-      <if test="originalSiteCode != null">
-        and original_site_code = #{originalSiteCode}
-      </if>
-      <if test="originalSiteName != null">
-        and original_site_name = #{originalSiteName}
-      </if>
-      <if test="originalUrl != null">
-        and original_url = #{originalUrl}
-      </if>
-      <if test="picUrl != null">
-        and pic_url = #{picUrl}
-      </if>
-      <if test="analysisCount != null">
-        and analysis_count = #{analysisCount}
-      </if>
-      <if test="keywords != null">
-        and keywords = #{keywords}
-      </if>
-      <if test="pubTime != null">
-        and pubTime = #{pub_time}
-      </if>
-      <if test="version != null">
-        and version = #{version}
-      </if>
-      and is_del = 0
-    </where>
-  </select>
+    <select id="selectPageByCondition" resultMap="BaseResultMap" parameterType="java.util.Map">
+        select
+        <include refid="Base_Column_List"/>
+        from website_spider
+        <where>
+            <if test="record.title != null">
+                and title = #{record.title}
+            </if>
+            <if test="record.viceTitle != null">
+                and vice_title = #{record.viceTitle}
+            </if>
+            <if test="record.author != null">
+                and author = #{record.author}
+            </if>
+            <if test="record.originalSiteCode != null">
+                and original_site_code = #{record.originalSiteCode}
+            </if>
+            <if test="record.originalSiteName != null">
+                and original_site_name = #{record.originalSiteName}
+            </if>
+            <if test="record.originalUrl != null">
+                and original_url = #{record.originalUrl}
+            </if>
+            <if test="record.picUrl != null">
+                and pic_url = #{record.picUrl}
+            </if>
+            <if test="record.analysisCount != null">
+                and analysis_count = #{record.analysisCount}
+            </if>
+            <if test="record.keywords != null">
+                and keywords = #{record.keywords}
+            </if>
+            <if test="record.pubTime != null">
+                and pubTime = #{record.pub_time}
+            </if>
+            <if test="record.version != null">
+                and version = #{record.version}
+            </if>
+            and is_del = 0
+        </where>
+        ORDER BY gmt_created DESC
+        <if test="paging != null and paging.start != null and paging.pageSize != null">
+            limit ${paging.start}, ${paging.pageSize}
+        </if>
+    </select>
+    <select id="countByCondition" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select count(*) from website_spider
+        <where>
+            <if test="record.title != null">
+                and title = #{record.title}
+            </if>
+            <if test="record.viceTitle != null">
+                and vice_title = #{record.viceTitle}
+            </if>
+            <if test="record.author != null">
+                and author = #{record.author}
+            </if>
+            <if test="record.originalSiteCode != null">
+                and original_site_code = #{record.originalSiteCode}
+            </if>
+            <if test="record.originalSiteName != null">
+                and original_site_name = #{record.originalSiteName}
+            </if>
+            <if test="record.originalUrl != null">
+                and original_url = #{record.originalUrl}
+            </if>
+            <if test="record.picUrl != null">
+                and pic_url = #{record.picUrl}
+            </if>
+            <if test="record.analysisCount != null">
+                and analysis_count = #{record.analysisCount}
+            </if>
+            <if test="record.keywords != null">
+                and keywords = #{record.keywords}
+            </if>
+            <if test="record.pubTime != null">
+                and pubTime = #{record.pub_time}
+            </if>
+            <if test="record.version != null">
+                and version = #{record.version}
+            </if>
+            and is_del = 0
+        </where>
+    </select>
+    <update id="updateByConditionSelective" parameterType="java.util.Map">
+        update website_spider
+        <set>
+            <trim suffixOverrides=",">
+                <if test="record.gmtCreated != null">
+                    gmt_created = #{record.gmtCreated,jdbcType=TIMESTAMP},
+                </if>
+                <if test="record.gmtModified != null">
+                    gmt_modified = #{record.gmtModified,jdbcType=TIMESTAMP},
+                </if>
+                <if test="record.createdBy != null">
+                    created_by = #{record.createdBy,jdbcType=VARCHAR},
+                </if>
+                <if test="record.modifiedBy != null">
+                    modified_by = #{record.modifiedBy,jdbcType=VARCHAR},
+                </if>
+                <if test="record.isDel != null">
+                    is_del = #{record.isDel,jdbcType=BIT},
+                </if>
+                <if test="record.title != null">
+                    title = #{record.title,jdbcType=VARCHAR},
+                </if>
+                <if test="record.viceTitle != null">
+                    vice_title = #{record.viceTitle,jdbcType=VARCHAR},
+                </if>
+                <if test="record.author != null">
+                    author = #{record.author,jdbcType=VARCHAR},
+                </if>
+                <if test="record.originalSiteCode != null">
+                    original_site_code = #{record.originalSiteCode,jdbcType=TINYINT},
+                </if>
+                <if test="record.originalSiteName != null">
+                    original_site_name = #{record.originalSiteName,jdbcType=VARCHAR},
+                </if>
+                <if test="record.originalUrl != null">
+                    original_url = #{record.originalUrl,jdbcType=VARCHAR},
+                </if>
+                <if test="record.picUrl != null">
+                    pic_url = #{record.picUrl,jdbcType=VARCHAR},
+                </if>
+                <if test="record.analysisCount != null">
+                    analysis_count = #{record.analysisCount,jdbcType=INTEGER},
+                </if>
+                <if test="record.keywords!= null">
+                    keywords = #{record.keywords,jdbcType=VARCHAR},
+                </if>
+                <if test="record.summary != null">
+                    summary = #{record.summary,jdbcType=VARCHAR},
+                </if>
+                <if test="record.pubTime != null">
+                    pub_time = #{record.pubTime,jdbcType=TIMESTAMP},
+                </if>
+                <if test="record.version != null">
+                    version = #{record.version,jdbcType=INTEGER},
+                </if>
+            </trim>
+        </set>
+        <if test="example != null">
+            <where>
+                <if test="example.id != null" >
+                    and id = #{example.id}
+                </if>
+                <if test="example.isDel != null">
+                    and is_del = #{example.isDel}
+                </if>
+                <if test="example.title != null">
+                    and title = #{example.title}
+                </if>
+                <if test="example.viceTitle != null">
+                    and vice_title = #{example.viceTitle}
+                </if>
+                <if test="example.author != null">
+                    and author = #{example.author}
+                </if>
+                <if test="example.originalSiteCode != null">
+                    and original_site_code = #{example.originalSiteCode}
+                </if>
+                <if test="example.originalSiteName != null">
+                    and original_site_name = #{example.originalSiteName}
+                </if>
+                <if test="example.originalUrl != null">
+                    and original_url = #{example.originalUrl}
+                </if>
+                <if test="example.picUrl != null">
+                    and pic_url = #{example.picUrl}
+                </if>
+                <if test="example.analysisCount != null">
+                    and analysis_count = #{example.analysisCount}
+                </if>
+                <if test="example.keywords != null">
+                    and keywords = #{example.keywords}
+                </if>
+                <if test="example.summary != null">
+                    and summary = #{example.summary}
+                </if>
+                <if test="example.pubTime != null">
+                    and pubTime = #{example.pub_time}
+                </if>
+                <if test="example.version != null">
+                    and version = #{example.version}
+                </if>
+            </where>
+        </if>
+    </update>
 </mapper>
