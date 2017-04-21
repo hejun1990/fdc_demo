@@ -1,14 +1,12 @@
 package com.hejun.demo.service.inter.domain.generation;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fdc.platform.common.validator.annotation.Domain;
 
 import java.io.Serializable;
 
 import lombok.Data;
 import lombok.ToString;
 
-@Domain
 @Data
 @ToString
 public class ArticleKeywords implements Serializable {

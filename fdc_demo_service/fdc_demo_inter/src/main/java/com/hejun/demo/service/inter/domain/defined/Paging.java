@@ -1,6 +1,5 @@
 package com.hejun.demo.service.inter.domain.defined;
 
-import com.fdc.platform.common.validator.annotation.Domain;
 import lombok.Data;
 import lombok.ToString;
 
@@ -9,7 +8,6 @@ import java.io.Serializable;
 /**
  * Created by hejun-FDC on 2017/4/20.
  */
-@Domain
 @Data
 @ToString
 public class Paging implements Serializable {

@@ -1,12 +1,12 @@
 package com.hejun.demo.service.impl.interceptor;
 
-import com.fdc.platform.common.validator.annotation.BizId;
-import com.fdc.platform.common.validator.annotation.Domain;
 import com.fdc.platform.common.yfid.GenIdService;
+import com.hejun.demo.service.inter.validator.annotation.BizId;
+import com.hejun.demo.service.inter.validator.annotation.Domain;
+import com.hejun.demo.service.inter.validator.annotation.Nofixed;
 import org.apache.commons.beanutils.MethodUtils;
 import org.apache.commons.lang.StringUtils;
 import org.aspectj.lang.JoinPoint;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -25,16 +25,7 @@ public class InsertInterceptor {
             Class cla = arg.getClass();
             if (cla.isAnnotationPresent(Domain.class)) {
                 try {
-                    Field[] fields = cla.getDeclaredFields();
-                    boolean commonFlag = false;
-                    for (Field field : fields) {
-                        String name = field.getName();
-                        if ("gmtCreated".equals(name)) {
-                            commonFlag = true;
-                            break;
-                        }
-                    }
-                    if (commonFlag) {
+                    if (!cla.isAnnotationPresent(Nofixed.class)) {
                         if (MethodUtils.invokeMethod(arg, "getGmtCreated", null) == null) {
                             MethodUtils.invokeMethod(arg, "setGmtCreated", new Date());
                         }
@@ -48,6 +39,7 @@ public class InsertInterceptor {
                             MethodUtils.invokeMethod(arg, "setModifiedBy", createName);
                         }
                     }
+                    Field[] fields = cla.getDeclaredFields();
                     for (Field field : fields) {
                         if (field.isAnnotationPresent(BizId.class)) {
                             String name = field.getName();

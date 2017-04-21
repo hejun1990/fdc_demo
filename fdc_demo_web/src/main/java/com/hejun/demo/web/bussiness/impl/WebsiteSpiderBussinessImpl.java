@@ -382,7 +382,7 @@ public class WebsiteSpiderBussinessImpl implements WebsiteSpiderBussiness {
         } catch (Exception e) {
             Object[] logVals = {dateMap.get("year"), dateMap.get("month"),
                     dateMap.get("day"), page, e.toString()};
-            logger.error("腾讯科技爬虫爬完{}年{}月{}日第{}页报错：。", logVals);
+            logger.error("腾讯科技爬虫爬完{}年{}月{}日第{}页报错：{}。", logVals);
         }
     }
 }

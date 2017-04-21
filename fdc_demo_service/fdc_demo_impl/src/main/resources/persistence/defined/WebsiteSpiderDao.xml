@@ -64,7 +64,9 @@
             <if test="record.version != null">
                 and version = #{record.version}
             </if>
-            and is_del = 0
+            <if test="record.isDel != null">
+                and is_del = #{record.isDel}
+            </if>
         </where>
         ORDER BY gmt_created DESC
         <if test="paging != null and paging.start != null and paging.pageSize != null">
@@ -107,7 +109,9 @@
             <if test="record.version != null">
                 and version = #{record.version}
             </if>
-            and is_del = 0
+            <if test="record.isDel != null">
+                and is_del = #{record.isDel}
+            </if>
         </where>
     </select>
     <update id="updateByConditionSelective" parameterType="java.util.Map">
@@ -169,7 +173,7 @@
         </set>
         <if test="example != null">
             <where>
-                <if test="example.id != null" >
+                <if test="example.id != null">
                     and id = #{example.id}
                 </if>
                 <if test="example.isDel != null">

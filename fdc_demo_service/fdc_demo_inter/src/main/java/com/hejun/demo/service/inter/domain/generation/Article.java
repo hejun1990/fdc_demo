@@ -1,12 +1,11 @@
 package com.hejun.demo.service.inter.domain.generation;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fdc.platform.common.validator.annotation.BizId;
-import com.fdc.platform.common.validator.annotation.Domain;
-
 import java.io.Serializable;
 import java.util.Date;
 
+import com.hejun.demo.service.inter.validator.annotation.BizId;
+import com.hejun.demo.service.inter.validator.annotation.Domain;
 import lombok.Data;
 import lombok.ToString;
 

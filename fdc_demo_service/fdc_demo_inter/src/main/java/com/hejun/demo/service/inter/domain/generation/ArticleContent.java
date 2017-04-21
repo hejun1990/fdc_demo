@@ -1,15 +1,17 @@
 package com.hejun.demo.service.inter.domain.generation;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fdc.platform.common.validator.annotation.BizId;
-import com.fdc.platform.common.validator.annotation.Domain;
 
 import java.io.Serializable;
 
+import com.hejun.demo.service.inter.validator.annotation.BizId;
+import com.hejun.demo.service.inter.validator.annotation.Domain;
+import com.hejun.demo.service.inter.validator.annotation.Nofixed;
 import lombok.Data;
 import lombok.ToString;
 
 @Domain
+@Nofixed
 @Data
 @ToString
 public class ArticleContent implements Serializable {

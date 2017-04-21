@@ -1,10 +1,10 @@
 package com.hejun.demo.service.impl.interceptor;
 
-import com.fdc.platform.common.validator.annotation.Domain;
+import com.hejun.demo.service.inter.validator.annotation.Domain;
+import com.hejun.demo.service.inter.validator.annotation.Nofixed;
 import org.apache.commons.beanutils.MethodUtils;
 import org.aspectj.lang.JoinPoint;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 
@@ -19,16 +19,7 @@ public class UpdateInterceptor {
             Class cla = arg.getClass();
             if (cla.isAnnotationPresent(Domain.class)) {
                 try {
-                    Field[] fields = cla.getDeclaredFields();
-                    boolean commonFlag = false;
-                    for (Field field : fields) {
-                        String name = field.getName();
-                        if ("gmtModified".equals(name)) {
-                            commonFlag = true;
-                            break;
-                        }
-                    }
-                    if (commonFlag) {
+                    if (!cla.isAnnotationPresent(Nofixed.class)) {
                         if (MethodUtils.invokeMethod(arg, "getGmtModified", null) == null) {
                             MethodUtils.invokeMethod(arg, "setGmtModified", new Date());
                         }
