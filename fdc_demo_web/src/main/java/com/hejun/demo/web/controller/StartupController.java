@@ -29,8 +29,8 @@ public class StartupController {
     @PostConstruct
     public void startUp() {
         fixedThreadPool = Executors.newFixedThreadPool(10);
-//        webSpider();
-        webArticleAnalysis();
+        webSpider();
+//        webArticleAnalysis();
     }
 
     private void webSpider() {
@@ -63,8 +63,7 @@ public class StartupController {
         fixedThreadPool.execute(new Runnable() {
             @Override
             public void run() {
-//                articleAnalysisBussiness.extractWebContent();
-                articleAnalysisBussiness.testContentHtml();
+                articleAnalysisBussiness.extractWebContent();
             }
         });
     }

@@ -8,6 +8,4 @@ public interface ArticleAnalysisBussiness {
      * 提取网页正文
      */
     void extractWebContent();
-
-    void testContentHtml();
 }

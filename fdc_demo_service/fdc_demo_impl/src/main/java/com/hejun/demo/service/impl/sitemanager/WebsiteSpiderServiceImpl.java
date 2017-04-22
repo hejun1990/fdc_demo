@@ -6,6 +6,7 @@ import com.hejun.demo.service.inter.dao.generation.*;
 import com.hejun.demo.service.inter.domain.defined.Paging;
 import com.hejun.demo.service.inter.domain.generation.*;
 import com.hejun.demo.service.inter.service.sitemanager.WebsiteSpiderService;
+import org.apache.commons.lang.StringUtils;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Isolation;
@@ -99,7 +100,7 @@ public class WebsiteSpiderServiceImpl implements WebsiteSpiderService {
         spiderRecord.setKeywords(article.getKeywords());
         spiderExample.setId(id);
         spiderExample.setVersion(version);
-        boolean result = updateByConditionSelective(spiderRecord, spiderExample);
+        boolean result = this.updateByConditionSelective(spiderRecord, spiderExample);
         if (!result) {
             return false;
         }
@@ -113,7 +114,7 @@ public class WebsiteSpiderServiceImpl implements WebsiteSpiderService {
             return false;
         }
         String keywords = article.getKeywords();
-        if (keywords != null) {
+        if (StringUtils.isNotEmpty(keywords)) {
             String[] keywordsArr = keywords.split(",");
             for (String word : keywordsArr) {
                 Map<String, Object> keywordsRecord = new HashMap<>();
