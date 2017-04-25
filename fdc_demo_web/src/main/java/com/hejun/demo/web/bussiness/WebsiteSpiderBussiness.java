@@ -32,4 +32,9 @@ public interface WebsiteSpiderBussiness {
      * 腾讯科技爬虫
      */
     void qqITSpider();
+
+    /**
+     * 网易科技爬虫
+     */
+    void wangyiITSpider();
 }

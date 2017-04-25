@@ -280,20 +280,12 @@ public class ArticleAnalysisBussinessImpl implements ArticleAnalysisBussiness {
     }
 
     public static void main(String[] args) {
-        String sina_originalUrl = "http://tech.sina.com.cn/i/2017-03-21/doc-ifycnpiu9254392.shtml";
-        String html = HttpUtil.httpClientGet(sina_originalUrl);
-        if (html.contains("id=\"artibody\"")) {
-            Document doc = Jsoup.parse(html);
-            doc.select("script,noscript,style,iframe,br").remove();
-            Element content = doc.select("div#artibody").first();
-            if (content != null) {
-                // 去掉广告
-                content.select("div.otherContent_01").remove();
-                String contentHtml = content.html();
-                ArticleAnalysisBussinessImpl articleAnalysisBussiness = new ArticleAnalysisBussinessImpl();
-                contentHtml = articleAnalysisBussiness.removeUselessAttribute(contentHtml);
-                logger.info("新浪科技正文处理后：\n{}", contentHtml);
-            }
-        }
+//        String originalUrl = "http://www.pingwest.com/wp-admin/admin-ajax.php";
+//        Map<String, Object> params = new HashMap<>();
+//        params.put("action", "my_ajax_allpost_next");
+//        params.put("paged", 3);
+//        String html = HttpUtil.httpClientGet(originalUrl, params);
+//        logger.info("品玩科技：\n{}", html);
+        logger.info("品玩科技：\n{}", Math.random());
     }
 }

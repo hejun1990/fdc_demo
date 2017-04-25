@@ -17,7 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -161,7 +164,7 @@ public class WebsiteSpiderBussinessImpl implements WebsiteSpiderBussiness {
                     totalPage = total % 30 == 0 ? total / 30 : total / 30 + 1;
                 }
             } else {
-                logger.warn("新浪科技爬虫在第{}页无法获取数据", page);
+                logger.warn("新浪科技爬虫无法取到第{}页数据", page);
             }
         }
         try {
@@ -259,7 +262,7 @@ public class WebsiteSpiderBussinessImpl implements WebsiteSpiderBussiness {
                             }
                         }
                     } else {
-                        logger.warn("新浪科技爬虫在第{}页无法获取数据", page);
+                        logger.warn("新浪科技爬虫无法取到第{}页数据", page);
                     }
                 }
                 logger.info("新浪科技爬虫爬完第{}页。", page);
@@ -300,7 +303,7 @@ public class WebsiteSpiderBussinessImpl implements WebsiteSpiderBussiness {
     private Map<String, String> getQQSpiderUrlReplace(int amount, SimpleDateFormat formatter) {
         Map<String, String> map = new HashMap<>();
         Calendar calendar = Calendar.getInstance();
-        calendar.add(calendar.DATE, amount); //把日期往后增加一天.整数往后推,负数往前移动
+        calendar.add(Calendar.DATE, amount); //把日期往后增加一天.整数往后推,负数往前移动
         String dateStr = formatter.format(calendar.getTime());
         String[] dataArr = dateStr.split("-");
         String year = dataArr[0];
@@ -370,7 +373,7 @@ public class WebsiteSpiderBussinessImpl implements WebsiteSpiderBussiness {
                 }
                 Object[] logVals = {dateMap.get("year"), dateMap.get("month"),
                         dateMap.get("day"), page};
-                logger.info("腾讯科技爬虫爬完{}年{}月{}日第{}页。", logVals);
+                logger.info("腾讯科技爬虫爬完{}年{}月{}日第{}页数据。", logVals);
                 if (isNextPage(content)) {
                     handleQQITContext(ori_spiderUrl, dateMap, ++page);
                 }
@@ -382,7 +385,108 @@ public class WebsiteSpiderBussinessImpl implements WebsiteSpiderBussiness {
         } catch (Exception e) {
             Object[] logVals = {dateMap.get("year"), dateMap.get("month"),
                     dateMap.get("day"), page, e.toString()};
-            logger.error("腾讯科技爬虫爬完{}年{}月{}日第{}页报错：{}。", logVals);
+            logger.error("腾讯科技爬虫爬取{}年{}月{}日第{}页报错：{}。", logVals);
         }
+    }
+
+    @Override
+    public void wangyiITSpider() {
+        long startTime = System.currentTimeMillis();
+        String today_spiderUrl = "http://tech.163.com/special/00094IHV/news_json.js?" + Math.random();
+        SimpleDateFormat yMd_formatter = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat yMd_Hms_Formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Map<String, String> todayMap = getWangyiSpiderUrlReplace(0, yMd_formatter);
+        // 爬取今日新闻
+        handleWangyiITContext(today_spiderUrl, todayMap, yMd_Hms_Formatter);
+
+        //原始爬虫地址
+        String ori_spiderUrl = SpiderEntry.WANGYI.getSpiderUrl();
+        int totalDay = 365 * 3; // 从当天开始爬取过去3年的历史数据
+        for (int amount = 1; amount <= totalDay; amount++) {
+            Map<String, String> dateMap = getWangyiSpiderUrlReplace(-amount, yMd_formatter);
+            String spiderUrl = ori_spiderUrl.replace("{year_month}", dateMap.get("year_month"))
+                    .replace("{day}", dateMap.get("day"))
+                    .replace("{random}", Double.toString(Math.random()));
+            handleWangyiITContext(spiderUrl, dateMap, yMd_Hms_Formatter);
+        }
+        long endTime = System.currentTimeMillis();
+        logger.info("网易科技爬虫任务完成，耗时{}分{}秒。",
+                (endTime - startTime) / (1000 * 60),
+                ((endTime - startTime) % (1000 * 60)) / 1000);
+    }
+
+    private void handleWangyiITContext(String spiderUrl, Map<String, String> dateMap, SimpleDateFormat formatter) {
+        try {
+            String content = HttpUtil.httpClientGet(spiderUrl,"GBK");
+            // 处理返回的json字符串，去掉首尾的非json格式字符
+            if (StringUtils.isNotEmpty(content)) {
+                content = content.substring(9, content.length() - 1);
+                JSONObject jsonObject = JSONObject.parseObject(content);
+                if (jsonObject != null) {
+                    JSONArray news = jsonObject.getJSONArray("news");
+                    for (int i = 0; i < news.size(); i++) {
+                        JSONArray array = news.getJSONArray(i);
+                        for (int j = 0; j < array.size(); j++) {
+                            JSONObject article = array.getJSONObject(j);
+                            String title = article.getString("t");
+                            String url = article.getString("l");
+                            String pubTime = article.getString("p");
+                            if (StringUtils.isEmpty(title) || StringUtils.isEmpty(url)) {
+                                continue;
+                            }
+                            title = title.trim();
+                            Map<String, Object> websiteSpiderParams = new HashMap<>();
+                            websiteSpiderParams.put("originalUrl", url);
+                            int websiteSpiderCount = websiteSpiderService.countByCondition(websiteSpiderParams);
+                            // 如果访问网址重复，跳过本次循环
+                            if (websiteSpiderCount > 0) {
+                                continue;
+                            }
+                            WebsiteSpider websiteSpider = new WebsiteSpider();
+                            websiteSpider.setOriginalUrl(url);
+                            websiteSpider.setOriginalSiteCode(SpiderEntry.WANGYI.getCode());
+                            websiteSpider.setOriginalSiteName(SpiderEntry.WANGYI.getName());
+                            websiteSpider.setTitle(title);
+                            websiteSpider.setPubTime(formatter.parse(pubTime));
+                            websiteSpiderService.insertSelective(websiteSpider);
+                        }
+                    }
+                    Object[] logVals = {dateMap.get("year"), dateMap.get("month"),
+                            dateMap.get("day")};
+                    logger.info("网易科技爬虫爬完{}年{}月{}日数据。", logVals);
+                } else {
+                    String[] logVals = {dateMap.get("year"), dateMap.get("month"),
+                            dateMap.get("day")};
+                    logger.warn("网易科技爬虫无法取到{}年{}月{}日数据。", logVals);
+                }
+            }
+        } catch (Exception e) {
+            String[] logVals = {dateMap.get("year"), dateMap.get("month"),
+                    dateMap.get("day"), e.toString()};
+            logger.error("网易科技爬虫爬取{}年{}月{}日数据报错：{}。", logVals);
+        }
+    }
+
+    /**
+     * 获取网易科技地址动态参数
+     *
+     * @param amount
+     * @param formatter
+     * @return
+     */
+    private Map<String, String> getWangyiSpiderUrlReplace(int amount, SimpleDateFormat formatter) {
+        Map<String, String> map = new HashMap<>();
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DATE, amount); //把日期往后增加一天.整数往后推,负数往前移动
+        String dateStr = formatter.format(calendar.getTime());
+        String[] dataArr = dateStr.split("-");
+        String year = dataArr[0];
+        String month = dataArr[1];
+        String day = dataArr[2];
+        map.put("year", year);
+        map.put("month", month);
+        map.put("day", day);
+        map.put("year_month", year + "-" + month);
+        return map;
     }
 }
