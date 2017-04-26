@@ -137,7 +137,7 @@ public class WebsiteSpiderBussinessImpl implements WebsiteSpiderBussiness {
                     (endTime - startTime) / (1000 * 60),
                     ((endTime - startTime) % (1000 * 60)) / 1000);
         } catch (Exception e) {
-            logger.info("搜狐科技爬虫爬到第{}页出错：{}", page, e.toString());
+            logger.info("搜狐科技爬虫爬到第{}页出错：{}", page, e.getMessage());
         }
     }
 
@@ -272,7 +272,7 @@ public class WebsiteSpiderBussinessImpl implements WebsiteSpiderBussiness {
                     (endTime - startTime) / (1000 * 60),
                     ((endTime - startTime) % (1000 * 60)) / 1000);
         } catch (Exception e) {
-            logger.error("新浪科技爬虫爬到第{}页出错：{}", page, e.toString());
+            logger.error("新浪科技爬虫爬到第{}页出错：{}", page, e.getMessage());
         }
     }
 
@@ -384,7 +384,7 @@ public class WebsiteSpiderBussinessImpl implements WebsiteSpiderBussiness {
             }
         } catch (Exception e) {
             Object[] logVals = {dateMap.get("year"), dateMap.get("month"),
-                    dateMap.get("day"), page, e.toString()};
+                    dateMap.get("day"), page, e.getMessage()};
             logger.error("腾讯科技爬虫爬取{}年{}月{}日第{}页报错：{}。", logVals);
         }
     }
@@ -417,7 +417,7 @@ public class WebsiteSpiderBussinessImpl implements WebsiteSpiderBussiness {
 
     private void handleWangyiITContext(String spiderUrl, Map<String, String> dateMap, SimpleDateFormat formatter) {
         try {
-            String content = HttpUtil.httpClientGet(spiderUrl,"GBK");
+            String content = HttpUtil.httpClientGet(spiderUrl, "GBK");
             // 处理返回的json字符串，去掉首尾的非json格式字符
             if (StringUtils.isNotEmpty(content)) {
                 content = content.substring(9, content.length() - 1);
@@ -462,7 +462,7 @@ public class WebsiteSpiderBussinessImpl implements WebsiteSpiderBussiness {
             }
         } catch (Exception e) {
             String[] logVals = {dateMap.get("year"), dateMap.get("month"),
-                    dateMap.get("day"), e.toString()};
+                    dateMap.get("day"), e.getMessage()};
             logger.error("网易科技爬虫爬取{}年{}月{}日数据报错：{}。", logVals);
         }
     }

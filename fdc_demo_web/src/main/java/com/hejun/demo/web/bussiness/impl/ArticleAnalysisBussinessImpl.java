@@ -50,7 +50,7 @@ public class ArticleAnalysisBussinessImpl implements ArticleAnalysisBussiness {
                 }
             } while (websiteSpiders != null && !websiteSpiders.isEmpty());
         } catch (Exception e) {
-            logger.error("抓取网页正文报错：{}", e.toString());
+            logger.error("抓取网页正文报错：{}", e.getMessage());
         }
     }
 
@@ -277,15 +277,5 @@ public class ArticleAnalysisBussinessImpl implements ArticleAnalysisBussiness {
         example.setId(id);
         example.setVersion(version);
         websiteSpiderService.deleteByConditionSelective(record, example);
-    }
-
-    public static void main(String[] args) {
-//        String originalUrl = "http://www.pingwest.com/wp-admin/admin-ajax.php";
-//        Map<String, Object> params = new HashMap<>();
-//        params.put("action", "my_ajax_allpost_next");
-//        params.put("paged", 3);
-//        String html = HttpUtil.httpClientGet(originalUrl, params);
-//        logger.info("品玩科技：\n{}", html);
-        logger.info("品玩科技：\n{}", Math.random());
     }
 }
