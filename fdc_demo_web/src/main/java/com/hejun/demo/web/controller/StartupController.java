@@ -31,6 +31,8 @@ public class StartupController {
         fixedThreadPool = Executors.newFixedThreadPool(10);
         webSpider();
 //        webArticleAnalysis();
+        fixedThreadPool.shutdown();
+        logger.info("shutDown->all thread shutdown");
     }
 
     private void webSpider() {
@@ -67,6 +69,24 @@ public class StartupController {
 
     private void webArticleAnalysis() {
         logger.info("开始对爬取网页进行正文解析");
+        fixedThreadPool.execute(new Runnable() {
+            @Override
+            public void run() {
+                articleAnalysisBussiness.extractWebContent();
+            }
+        });
+        fixedThreadPool.execute(new Runnable() {
+            @Override
+            public void run() {
+                articleAnalysisBussiness.extractWebContent();
+            }
+        });
+        fixedThreadPool.execute(new Runnable() {
+            @Override
+            public void run() {
+                articleAnalysisBussiness.extractWebContent();
+            }
+        });
         fixedThreadPool.execute(new Runnable() {
             @Override
             public void run() {

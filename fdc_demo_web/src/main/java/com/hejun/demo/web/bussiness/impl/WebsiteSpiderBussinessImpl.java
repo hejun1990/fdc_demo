@@ -49,6 +49,7 @@ public class WebsiteSpiderBussinessImpl implements WebsiteSpiderBussiness {
 
     @Override
     public void sohuITSpider() {
+        String currentThreadName = Thread.currentThread().getName();
         //原始爬虫地址，需要替换{PAGE}参数
         String ori_spiderUrl = SpiderEntry.SOHU.getSpiderUrl();
         int page = 1;
@@ -58,8 +59,9 @@ public class WebsiteSpiderBussinessImpl implements WebsiteSpiderBussiness {
             for (; page <= 50; page++) {
                 String spiderUrl = ori_spiderUrl.replace("{PAGE}", String.valueOf(page));
                 String content = HttpUtil.httpClientGet(spiderUrl);
-                // 处理返回的json字符串，去掉首尾的非json格式字符
+                // 处理返回的json字符串
                 if (StringUtils.isNotEmpty(content)) {
+                    // 去掉首尾的非json格式字符
                     content = content.substring(7, content.length() - 2);
                     JSONArray jsonArray = JSONArray.parseArray(content);
                     if (jsonArray != null && jsonArray.size() > 0) {
@@ -100,7 +102,7 @@ public class WebsiteSpiderBussinessImpl implements WebsiteSpiderBussiness {
                                     }
                                     websiteSpider.setPicUrl(picUrl);
                                 }
-                                // 处理标签
+                                // 处理关键字
                                 JSONArray tags = jsonObject.getJSONArray("tags");
                                 if (tags != null && tags.size() > 0) {
                                     StringBuilder keywordsBuilder = new StringBuilder();
@@ -127,22 +129,23 @@ public class WebsiteSpiderBussinessImpl implements WebsiteSpiderBussiness {
                             }
                         }
                     } else {
-                        logger.warn("搜狐科技爬虫在第{}页无法获取数据", page);
+                        logger.warn("[{}]搜狐科技爬虫在第{}页无法获取数据", currentThreadName, page);
                     }
                 }
-                logger.info("搜狐科技爬虫爬完第{}页。", page);
+                logger.info("[{}]搜狐科技爬虫爬完第{}页。", currentThreadName, page);
             }
             long endTime = System.currentTimeMillis();
-            logger.info("搜狐科技爬虫任务完成，耗时{}分{}秒。",
-                    (endTime - startTime) / (1000 * 60),
-                    ((endTime - startTime) % (1000 * 60)) / 1000);
+            Object[] logVals = {currentThreadName, (endTime - startTime) / (1000 * 60), ((endTime - startTime) % (1000 * 60)) / 1000};
+            logger.info("[{}]搜狐科技爬虫任务完成，耗时{}分{}秒。", logVals);
         } catch (Exception e) {
-            logger.info("搜狐科技爬虫爬到第{}页出错：{}", page, e.getMessage());
+            Object[] logVals = {currentThreadName, page, e.getMessage()};
+            logger.info("[{}]搜狐科技爬虫爬到第{}页出错：{}", logVals);
         }
     }
 
     @Override
     public void sinaITSpider() {
+        String currentThreadName = Thread.currentThread().getName();
         //原始爬虫地址，需要替换{PAGE}参数
         String ori_spiderUrl = SpiderEntry.SINA.getSpiderUrl();
         int page = 1; // 当前页
@@ -152,6 +155,7 @@ public class WebsiteSpiderBussinessImpl implements WebsiteSpiderBussiness {
         String content = HttpUtil.httpClientGet(spiderUrl);
         // 获取新闻列表总页数(每页30条)
         if (StringUtils.isNotEmpty(content)) {
+            // 去掉首尾的非json格式字符
             content = content.substring(26, content.length() - 14);
             JSONObject jsonObject = JSONObject.parseObject(content);
             if (jsonObject != null) {
@@ -164,7 +168,7 @@ public class WebsiteSpiderBussinessImpl implements WebsiteSpiderBussiness {
                     totalPage = total % 30 == 0 ? total / 30 : total / 30 + 1;
                 }
             } else {
-                logger.warn("新浪科技爬虫无法取到第{}页数据", page);
+                logger.warn("[{}]新浪科技爬虫无法取到第{}页数据", currentThreadName, page);
             }
         }
         try {
@@ -174,6 +178,7 @@ public class WebsiteSpiderBussinessImpl implements WebsiteSpiderBussiness {
                 spiderUrl = ori_spiderUrl.replace("{PAGE}", String.valueOf(page));
                 content = HttpUtil.httpClientGet(spiderUrl);
                 if (StringUtils.isNotEmpty(content)) {
+                    // 去掉首尾的非json格式字符
                     content = content.substring(26, content.length() - 14);
                     JSONObject jsonObject = JSONObject.parseObject(content);
                     if (jsonObject != null) {
@@ -262,22 +267,23 @@ public class WebsiteSpiderBussinessImpl implements WebsiteSpiderBussiness {
                             }
                         }
                     } else {
-                        logger.warn("新浪科技爬虫无法取到第{}页数据", page);
+                        logger.warn("[{}]新浪科技爬虫无法取到第{}页数据", currentThreadName, page);
                     }
                 }
-                logger.info("新浪科技爬虫爬完第{}页。", page);
+                logger.info("[{}]新浪科技爬虫爬完第{}页。", currentThreadName, page);
             }
             long endTime = System.currentTimeMillis();
-            logger.info("新浪科技爬虫任务完成，耗时{}分{}秒。",
-                    (endTime - startTime) / (1000 * 60),
-                    ((endTime - startTime) % (1000 * 60)) / 1000);
+            Object[] logVals = {currentThreadName, (endTime - startTime) / (1000 * 60), ((endTime - startTime) % (1000 * 60)) / 1000};
+            logger.info("[{}]新浪科技爬虫任务完成，耗时{}分{}秒。", logVals);
         } catch (Exception e) {
-            logger.error("新浪科技爬虫爬到第{}页出错：{}", page, e.getMessage());
+            Object[] logVals = {currentThreadName, page, e.getMessage()};
+            logger.error("[{}]新浪科技爬虫爬到第{}页出错：{}", logVals);
         }
     }
 
     @Override
     public void qqITSpider() {
+        String currentThreadName = Thread.currentThread().getName();
         //原始爬虫地址
         String ori_spiderUrl = SpiderEntry.QQ.getSpiderUrl();
         int totalDay = 365 * 3; // 从当天开始爬取过去3年的历史数据
@@ -285,12 +291,151 @@ public class WebsiteSpiderBussinessImpl implements WebsiteSpiderBussiness {
         long startTime = System.currentTimeMillis();
         for (int amount = 0; amount < totalDay; amount++) {
             Map<String, String> replaceMap = getQQSpiderUrlReplace(-amount, formatter);
-            handleQQITContext(ori_spiderUrl, replaceMap, 1);
+            handleQQITContext(ori_spiderUrl, replaceMap, 1, currentThreadName);
         }
         long endTime = System.currentTimeMillis();
-        logger.info("腾讯科技爬虫任务完成，耗时{}分{}秒。",
-                (endTime - startTime) / (1000 * 60),
-                ((endTime - startTime) % (1000 * 60)) / 1000);
+        Object[] logVals = {currentThreadName, (endTime - startTime) / (1000 * 60), ((endTime - startTime) % (1000 * 60)) / 1000};
+        logger.info("[{}]腾讯科技爬虫任务完成，耗时{}分{}秒。", logVals);
+    }
+
+    /**
+     * 处理腾讯科技列表网页信息
+     *
+     * @param ori_spiderUrl
+     * @param dateMap
+     * @param page
+     */
+    private void handleQQITContext(String ori_spiderUrl, Map<String, String> dateMap, int page,
+                                   String currentThreadName) {
+        try {
+            String spiderUrl;
+            if (page > 1) {
+                spiderUrl = ori_spiderUrl.replace("{YEAR_MONTH}", dateMap.get("year_month"))
+                        .replace("{DAY_PAGE}", dateMap.get("day") + "_" + page);
+            } else {
+                spiderUrl = ori_spiderUrl.replace("{YEAR_MONTH}", dateMap.get("year_month"))
+                        .replace("{DAY_PAGE}", dateMap.get("day"));
+            }
+            String content = HttpUtil.httpClientGet(spiderUrl);
+            if (StringUtils.isNotEmpty(content)) {
+                String pattern = "<a target=\"_blank\" href=\"(http://tech.qq.com/a/"
+                        + dateMap.get("year_month_day") + "/(?:\\w)+.htm)\">(.*?)</a>";
+                Pattern p = Pattern.compile(pattern);
+                Matcher m = p.matcher(content);
+                while (m.find()) {
+                    String url = m.group(1);
+                    String title = m.group(2);
+                    Map<String, Object> websiteSpiderParams = new HashMap<>();
+                    websiteSpiderParams.put("originalUrl", url);
+                    int websiteSpiderCount = websiteSpiderService.countByCondition(websiteSpiderParams);
+                    // 如果访问网址重复，跳过本次循环
+                    if (websiteSpiderCount > 0) {
+                        continue;
+                    }
+                    WebsiteSpider websiteSpider = new WebsiteSpider();
+                    websiteSpider.setOriginalUrl(url);
+                    websiteSpider.setOriginalSiteCode(SpiderEntry.QQ.getCode());
+                    websiteSpider.setOriginalSiteName(SpiderEntry.QQ.getName());
+                    websiteSpider.setTitle(title);
+                    websiteSpider.setAuthor(SpiderEntry.QQ.getName());
+                    websiteSpiderService.insertSelective(websiteSpider);
+                }
+                Object[] logVals = {currentThreadName, dateMap.get("year"), dateMap.get("month"),
+                        dateMap.get("day"), page};
+                logger.info("[{}]腾讯科技爬虫爬完{}年{}月{}日第{}页数据。", logVals);
+                if (isNextPage(content)) {
+                    handleQQITContext(ori_spiderUrl, dateMap, ++page, currentThreadName);
+                }
+            } else {
+                Object[] logVals = {currentThreadName, dateMap.get("year"), dateMap.get("month"),
+                        dateMap.get("day"), page};
+                logger.warn("[{}]腾讯科技爬虫无法取到{}年{}月{}日第{}页数据。", logVals);
+            }
+        } catch (Exception e) {
+            Object[] logVals = {currentThreadName, dateMap.get("year"), dateMap.get("month"),
+                    dateMap.get("day"), page, e.getMessage()};
+            logger.error("[{}]腾讯科技爬虫爬取{}年{}月{}日第{}页报错：{}。", logVals);
+        }
+    }
+
+    @Override
+    public void wangyiITSpider() {
+        String currentThreadName = Thread.currentThread().getName();
+        long startTime = System.currentTimeMillis();
+        String today_spiderUrl = "http://tech.163.com/special/00094IHV/news_json.js?" + Math.random();
+        SimpleDateFormat yMd_formatter = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat yMd_Hms_Formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Map<String, String> todayMap = getWangyiSpiderUrlReplace(0, yMd_formatter);
+        // 爬取今日新闻
+        handleWangyiITContext(today_spiderUrl, todayMap, yMd_Hms_Formatter, currentThreadName);
+
+        //原始爬虫地址
+        String ori_spiderUrl = SpiderEntry.WANGYI.getSpiderUrl();
+        int totalDay = 365 * 3; // 从当天开始爬取过去3年的历史数据
+        for (int amount = 1; amount <= totalDay; amount++) {
+            Map<String, String> dateMap = getWangyiSpiderUrlReplace(-amount, yMd_formatter);
+            String spiderUrl = ori_spiderUrl.replace("{year_month}", dateMap.get("year_month"))
+                    .replace("{day}", dateMap.get("day"))
+                    .replace("{random}", Double.toString(Math.random()));
+            handleWangyiITContext(spiderUrl, dateMap, yMd_Hms_Formatter, currentThreadName);
+        }
+        long endTime = System.currentTimeMillis();
+        Object[] logVals = {currentThreadName, (endTime - startTime) / (1000 * 60), ((endTime - startTime) % (1000 * 60)) / 1000};
+        logger.info("[{}]网易科技爬虫任务完成，耗时{}分{}秒。", logVals);
+    }
+
+    private void handleWangyiITContext(String spiderUrl, Map<String, String> dateMap, SimpleDateFormat formatter,
+                                       String currentThreadName) {
+        try {
+            String content = HttpUtil.httpClientGet(spiderUrl, "GBK");
+            // 处理返回的json字符串
+            if (StringUtils.isNotEmpty(content)) {
+                // 去掉首尾的非json格式字符
+                content = content.substring(9, content.length() - 1);
+                JSONObject jsonObject = JSONObject.parseObject(content);
+                if (jsonObject != null) {
+                    JSONArray news = jsonObject.getJSONArray("news");
+                    for (int i = 0; i < news.size(); i++) {
+                        JSONArray array = news.getJSONArray(i);
+                        for (int j = 0; j < array.size(); j++) {
+                            JSONObject article = array.getJSONObject(j);
+                            String title = article.getString("t");
+                            String url = article.getString("l");
+                            String pubTime = article.getString("p");
+                            if (StringUtils.isEmpty(title) || StringUtils.isEmpty(url)) {
+                                continue;
+                            }
+                            title = title.trim();
+                            Map<String, Object> websiteSpiderParams = new HashMap<>();
+                            websiteSpiderParams.put("originalUrl", url);
+                            int websiteSpiderCount = websiteSpiderService.countByCondition(websiteSpiderParams);
+                            // 如果访问网址重复，跳过本次循环
+                            if (websiteSpiderCount > 0) {
+                                continue;
+                            }
+                            WebsiteSpider websiteSpider = new WebsiteSpider();
+                            websiteSpider.setOriginalUrl(url);
+                            websiteSpider.setOriginalSiteCode(SpiderEntry.WANGYI.getCode());
+                            websiteSpider.setOriginalSiteName(SpiderEntry.WANGYI.getName());
+                            websiteSpider.setTitle(title);
+                            websiteSpider.setPubTime(formatter.parse(pubTime));
+                            websiteSpiderService.insertSelective(websiteSpider);
+                        }
+                    }
+                    Object[] logVals = {currentThreadName, dateMap.get("year"), dateMap.get("month"),
+                            dateMap.get("day")};
+                    logger.info("[{}]网易科技爬虫爬完{}年{}月{}日数据。", logVals);
+                } else {
+                    String[] logVals = {currentThreadName, dateMap.get("year"), dateMap.get("month"),
+                            dateMap.get("day")};
+                    logger.warn("[{}]网易科技爬虫无法取到{}年{}月{}日数据。", logVals);
+                }
+            }
+        } catch (Exception e) {
+            String[] logVals = {currentThreadName, dateMap.get("year"), dateMap.get("month"),
+                    dateMap.get("day"), e.getMessage()};
+            logger.error("[{}]网易科技爬虫爬取{}年{}月{}日数据报错：{}。", logVals);
+        }
     }
 
     /**
@@ -328,143 +473,6 @@ public class WebsiteSpiderBussinessImpl implements WebsiteSpiderBussiness {
         Pattern p = Pattern.compile(pattern);
         Matcher m = p.matcher(content);
         return !m.find();
-    }
-
-    /**
-     * 处理腾讯科技列表网页信息
-     *
-     * @param ori_spiderUrl
-     * @param dateMap
-     * @param page
-     */
-    private void handleQQITContext(String ori_spiderUrl, Map<String, String> dateMap, int page) {
-        try {
-            String spiderUrl;
-            if (page > 1) {
-                spiderUrl = ori_spiderUrl.replace("{YEAR_MONTH}", dateMap.get("year_month"))
-                        .replace("{DAY_PAGE}", dateMap.get("day") + "_" + page);
-            } else {
-                spiderUrl = ori_spiderUrl.replace("{YEAR_MONTH}", dateMap.get("year_month"))
-                        .replace("{DAY_PAGE}", dateMap.get("day"));
-            }
-            String content = HttpUtil.httpClientGet(spiderUrl);
-            if (StringUtils.isNotEmpty(content)) {
-                String pattern = "<a target=\"_blank\" href=\"(http://tech.qq.com/a/"
-                        + dateMap.get("year_month_day") + "/(?:\\w)+.htm)\">(.*?)</a>";
-                Pattern p = Pattern.compile(pattern);
-                Matcher m = p.matcher(content);
-                while (m.find()) {
-                    String url = m.group(1);
-                    String title = m.group(2);
-                    Map<String, Object> websiteSpiderParams = new HashMap<>();
-                    websiteSpiderParams.put("originalUrl", url);
-                    int websiteSpiderCount = websiteSpiderService.countByCondition(websiteSpiderParams);
-                    // 如果访问网址重复，跳过本次循环
-                    if (websiteSpiderCount > 0) {
-                        continue;
-                    }
-                    WebsiteSpider websiteSpider = new WebsiteSpider();
-                    websiteSpider.setOriginalUrl(url);
-                    websiteSpider.setOriginalSiteCode(SpiderEntry.QQ.getCode());
-                    websiteSpider.setOriginalSiteName(SpiderEntry.QQ.getName());
-                    websiteSpider.setTitle(title);
-                    websiteSpider.setAuthor(SpiderEntry.QQ.getName());
-                    websiteSpiderService.insertSelective(websiteSpider);
-                }
-                Object[] logVals = {dateMap.get("year"), dateMap.get("month"),
-                        dateMap.get("day"), page};
-                logger.info("腾讯科技爬虫爬完{}年{}月{}日第{}页数据。", logVals);
-                if (isNextPage(content)) {
-                    handleQQITContext(ori_spiderUrl, dateMap, ++page);
-                }
-            } else {
-                Object[] logVals = {dateMap.get("year"), dateMap.get("month"),
-                        dateMap.get("day"), page};
-                logger.warn("腾讯科技爬虫无法取到{}年{}月{}日第{}页数据。", logVals);
-            }
-        } catch (Exception e) {
-            Object[] logVals = {dateMap.get("year"), dateMap.get("month"),
-                    dateMap.get("day"), page, e.getMessage()};
-            logger.error("腾讯科技爬虫爬取{}年{}月{}日第{}页报错：{}。", logVals);
-        }
-    }
-
-    @Override
-    public void wangyiITSpider() {
-        long startTime = System.currentTimeMillis();
-        String today_spiderUrl = "http://tech.163.com/special/00094IHV/news_json.js?" + Math.random();
-        SimpleDateFormat yMd_formatter = new SimpleDateFormat("yyyy-MM-dd");
-        SimpleDateFormat yMd_Hms_Formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Map<String, String> todayMap = getWangyiSpiderUrlReplace(0, yMd_formatter);
-        // 爬取今日新闻
-        handleWangyiITContext(today_spiderUrl, todayMap, yMd_Hms_Formatter);
-
-        //原始爬虫地址
-        String ori_spiderUrl = SpiderEntry.WANGYI.getSpiderUrl();
-        int totalDay = 365 * 3; // 从当天开始爬取过去3年的历史数据
-        for (int amount = 1; amount <= totalDay; amount++) {
-            Map<String, String> dateMap = getWangyiSpiderUrlReplace(-amount, yMd_formatter);
-            String spiderUrl = ori_spiderUrl.replace("{year_month}", dateMap.get("year_month"))
-                    .replace("{day}", dateMap.get("day"))
-                    .replace("{random}", Double.toString(Math.random()));
-            handleWangyiITContext(spiderUrl, dateMap, yMd_Hms_Formatter);
-        }
-        long endTime = System.currentTimeMillis();
-        logger.info("网易科技爬虫任务完成，耗时{}分{}秒。",
-                (endTime - startTime) / (1000 * 60),
-                ((endTime - startTime) % (1000 * 60)) / 1000);
-    }
-
-    private void handleWangyiITContext(String spiderUrl, Map<String, String> dateMap, SimpleDateFormat formatter) {
-        try {
-            String content = HttpUtil.httpClientGet(spiderUrl, "GBK");
-            // 处理返回的json字符串，去掉首尾的非json格式字符
-            if (StringUtils.isNotEmpty(content)) {
-                content = content.substring(9, content.length() - 1);
-                JSONObject jsonObject = JSONObject.parseObject(content);
-                if (jsonObject != null) {
-                    JSONArray news = jsonObject.getJSONArray("news");
-                    for (int i = 0; i < news.size(); i++) {
-                        JSONArray array = news.getJSONArray(i);
-                        for (int j = 0; j < array.size(); j++) {
-                            JSONObject article = array.getJSONObject(j);
-                            String title = article.getString("t");
-                            String url = article.getString("l");
-                            String pubTime = article.getString("p");
-                            if (StringUtils.isEmpty(title) || StringUtils.isEmpty(url)) {
-                                continue;
-                            }
-                            title = title.trim();
-                            Map<String, Object> websiteSpiderParams = new HashMap<>();
-                            websiteSpiderParams.put("originalUrl", url);
-                            int websiteSpiderCount = websiteSpiderService.countByCondition(websiteSpiderParams);
-                            // 如果访问网址重复，跳过本次循环
-                            if (websiteSpiderCount > 0) {
-                                continue;
-                            }
-                            WebsiteSpider websiteSpider = new WebsiteSpider();
-                            websiteSpider.setOriginalUrl(url);
-                            websiteSpider.setOriginalSiteCode(SpiderEntry.WANGYI.getCode());
-                            websiteSpider.setOriginalSiteName(SpiderEntry.WANGYI.getName());
-                            websiteSpider.setTitle(title);
-                            websiteSpider.setPubTime(formatter.parse(pubTime));
-                            websiteSpiderService.insertSelective(websiteSpider);
-                        }
-                    }
-                    Object[] logVals = {dateMap.get("year"), dateMap.get("month"),
-                            dateMap.get("day")};
-                    logger.info("网易科技爬虫爬完{}年{}月{}日数据。", logVals);
-                } else {
-                    String[] logVals = {dateMap.get("year"), dateMap.get("month"),
-                            dateMap.get("day")};
-                    logger.warn("网易科技爬虫无法取到{}年{}月{}日数据。", logVals);
-                }
-            }
-        } catch (Exception e) {
-            String[] logVals = {dateMap.get("year"), dateMap.get("month"),
-                    dateMap.get("day"), e.getMessage()};
-            logger.error("网易科技爬虫爬取{}年{}月{}日数据报错：{}。", logVals);
-        }
     }
 
     /**

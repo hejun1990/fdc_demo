@@ -98,6 +98,8 @@ public class WebsiteSpiderServiceImpl implements WebsiteSpiderService {
         spiderRecord.setAnalysisCount(analysisCount + 1);
         spiderRecord.setVersion(version + 1);
         spiderRecord.setKeywords(article.getKeywords());
+        spiderRecord.setAuthor(article.getAuthor());
+        spiderRecord.setPubTime(article.getPubTime());
         spiderExample.setId(id);
         spiderExample.setVersion(version);
         boolean result = this.updateByConditionSelective(spiderRecord, spiderExample);
