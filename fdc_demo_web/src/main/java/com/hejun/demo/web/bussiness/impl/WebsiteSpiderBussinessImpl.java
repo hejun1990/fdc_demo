@@ -17,10 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -215,6 +212,8 @@ public class WebsiteSpiderBussinessImpl implements WebsiteSpiderBussiness {
                                 websiteSpider.setOriginalSiteCode(SpiderEntry.SINA.getCode());
                                 websiteSpider.setOriginalSiteName(SpiderEntry.SINA.getName());
                                 websiteSpider.setTitle(title);
+                                long ctime = article.getLongValue("ctime");
+                                websiteSpider.setPubTime(new Date(ctime));
                                 String stitle = article.getString("stitle");
                                 if (StringUtils.isNotEmpty(stitle)) {
                                     websiteSpider.setViceTitle(stitle);

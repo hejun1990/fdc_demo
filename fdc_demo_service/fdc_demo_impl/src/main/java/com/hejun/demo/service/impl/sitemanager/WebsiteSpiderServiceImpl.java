@@ -97,9 +97,21 @@ public class WebsiteSpiderServiceImpl implements WebsiteSpiderService {
         int analysisCount = websiteSpider.getAnalysisCount();
         spiderRecord.setAnalysisCount(analysisCount + 1);
         spiderRecord.setVersion(version + 1);
-        spiderRecord.setKeywords(article.getKeywords());
-        spiderRecord.setAuthor(article.getAuthor());
-        spiderRecord.setPubTime(article.getPubTime());
+        if (StringUtils.isEmpty(websiteSpider.getKeywords())) {
+            if (StringUtils.isNotEmpty(article.getKeywords())) {
+                spiderRecord.setKeywords(article.getKeywords());
+            }
+        }
+        if (StringUtils.isEmpty(websiteSpider.getAuthor())) {
+            if (StringUtils.isNotEmpty(article.getAuthor())) {
+                spiderRecord.setAuthor(article.getAuthor());
+            }
+        }
+        if (websiteSpider.getPubTime() == null) {
+            if (article.getPubTime() != null) {
+                spiderRecord.setPubTime(article.getPubTime());
+            }
+        }
         spiderExample.setId(id);
         spiderExample.setVersion(version);
         boolean result = this.updateByConditionSelective(spiderRecord, spiderExample);

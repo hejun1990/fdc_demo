@@ -42,6 +42,8 @@ public class ArticleAnalysisBussinessImpl implements ArticleAnalysisBussiness {
         long startTime = System.currentTimeMillis();
         Map<String, Object> record = new HashMap<>();
         record.put("analysisCount", 0);
+        record.put("isDel", 0);
+        record.put("originalSiteCode", SpiderEntry.WANGYI.getCode());
         Paging paging = new Paging();
         List<WebsiteSpider> websiteSpiders = websiteSpiderService.selectPageByCondition(record, paging);
         do {
@@ -168,9 +170,16 @@ public class ArticleAnalysisBussinessImpl implements ArticleAnalysisBussiness {
                     article.setKeywords(keywordsBuilder.substring(0, keywordsBuilder.length() - 1));
                 }
                 // 抓取文章发布时间
+                String pubTime = null;
                 Element pubTimeEl = doc.select("span.titer").first();
                 if (pubTimeEl != null) {
-                    String pubTime = pubTimeEl.text();
+                    pubTime = pubTimeEl.text();
+                }
+                Element pubTimeWeiboEl = doc.select("span#pub_date").first();
+                if (pubTimeWeiboEl != null) {
+                    pubTime = pubTimeWeiboEl.text();
+                }
+                if (pubTime != null) {
                     pubTime = pubTime.replace("年", "-").replace("月", "-").replace("日", "");
                     SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
                     Date date = formatter.parse(pubTime);
@@ -230,56 +239,73 @@ public class ArticleAnalysisBussinessImpl implements ArticleAnalysisBussiness {
 
                 Document doc = Jsoup.parse(html);
                 doc.select("script,noscript,style,iframe,br").remove();
-                // 抓取文章关键字
-                Element keywordsEl = doc.select("meta[name=keywords]").first();
-                if (keywordsEl != null) {
-                    String keywords = keywordsEl.attr("content");
-                    String[] keywordsArr = keywords.split(",");
-                    if (keywordsArr.length > 1) {
-                        StringBuilder keywordsBuilder = new StringBuilder();
-                        for (int i = 1; i < keywordsArr.length; i++) {
-                            if (i != 1) {
-                                keywordsBuilder.append(",");
-                            }
-                            keywordsBuilder.append(keywordsArr[i]);
-                        }
-                        article.setKeywords(keywordsBuilder.toString());
-                    }
-                }
-                // 抓取文章作者（文章来源）
-                Element authorEl = doc.select("span.a_source").first();
-                if (authorEl != null) {
-                    Element link = authorEl.select("a[href]").first();
-                    String author;
-                    if (link != null) {
-                        author = link.text();
-                    } else {
-                        author = authorEl.text();
-                    }
-                    article.setAuthor(author);
-                }
-                // 抓取文章发布时间
-                Element pubTimeEl = doc.select("span.a_time").first();
-                if (pubTimeEl != null) {
-                    String pubTime = pubTimeEl.text();
-                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-                    Date date = formatter.parse(pubTime);
-                    article.setPubTime(date);
-                }
-                // 抓取文章正文
-                Element content = doc.select("div#Cnt-Main-Article-QQ").first();
-                if (content != null) {
-                    // 去掉视频
-                    content.select("div.rv-js-root").remove();
-                    String contentHtml = content.html();
-                    contentHtml = removeUselessAttribute(contentHtml);
-                    articleContent.setContent(contentHtml);
-                }
 
-                handleResult = websiteSpiderService.handleSpiderContent(websiteSpider, article, articleContent);
-                Object[] logVals = {currentThreadName, currentChapter, websiteSpider.getTitle(),
-                        handleResult ? "处理成功" : "已经被处理过"};
-                logger.info("[{}]处理第{}篇文章，来源腾讯科技，标题\"{}\"，结果：{}", logVals);
+                // 判断本文是否由腾讯科技机器人Dreamwriter自动撰写
+                boolean isDreamwriter = false;
+                Element dreamwriter = doc.select("span.where").first();
+                if (dreamwriter != null) {
+                    String dreamwriterText = dreamwriter.text();
+                    if ("Dreamwriter".equals(dreamwriterText)) {
+                        isDreamwriter = true;
+                    }
+                }
+                if (!isDreamwriter) {
+                    // 抓取文章关键字
+                    Element keywordsEl = doc.select("meta[name=keywords]").first();
+                    if (keywordsEl != null) {
+                        String keywords = keywordsEl.attr("content");
+                        String[] keywordsArr = keywords.split(",");
+                        if (keywordsArr.length > 1) {
+                            StringBuilder keywordsBuilder = new StringBuilder();
+                            for (int i = 1; i < keywordsArr.length; i++) {
+                                if (i != 1) {
+                                    keywordsBuilder.append(",");
+                                }
+                                keywordsBuilder.append(keywordsArr[i]);
+                            }
+                            article.setKeywords(keywordsBuilder.toString());
+                        }
+                    }
+                    // 抓取文章作者（文章来源）
+                    Element authorEl = doc.select("span.a_source").first();
+                    if (authorEl != null) {
+                        Element link = authorEl.select("a[href]").first();
+                        String author;
+                        if (link != null) {
+                            author = link.text();
+                        } else {
+                            author = authorEl.text();
+                        }
+                        article.setAuthor(author);
+                    }
+                    // 抓取文章发布时间
+                    Element pubTimeEl = doc.select("span.a_time").first();
+                    if (pubTimeEl != null) {
+                        String pubTime = pubTimeEl.text();
+                        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                        Date date = formatter.parse(pubTime);
+                        article.setPubTime(date);
+                    }
+                    // 抓取文章正文
+                    Element content = doc.select("div#Cnt-Main-Article-QQ").first();
+                    if (content != null) {
+                        // 去掉视频
+                        content.select("div.rv-js-root").remove();
+                        String contentHtml = content.html();
+                        contentHtml = removeUselessAttribute(contentHtml);
+                        articleContent.setContent(contentHtml);
+                    }
+
+                    handleResult = websiteSpiderService.handleSpiderContent(websiteSpider, article, articleContent);
+                    Object[] logVals = {currentThreadName, currentChapter, websiteSpider.getTitle(),
+                            handleResult ? "处理成功" : "已经被处理过"};
+                    logger.info("[{}]处理第{}篇文章，来源腾讯科技，标题\"{}\"，结果：{}", logVals);
+                } else {
+                    handleResult = delWebsiteSpider(websiteSpider);
+                    Object[] logVals = {currentThreadName, currentChapter, websiteSpider.getTitle(),
+                            handleResult ? "删除成功" : "删除失败"};
+                    logger.info("[{}]处理完第{}篇文章，来源腾讯科技，标题\"{}\"，结果：本文由腾讯科技机器人Dreamwriter自动撰写，{}", logVals);
+                }
             } catch (Exception e) {
                 Object[] logVals = {currentThreadName, currentChapter, websiteSpider.getTitle(),
                         e.getMessage()};
@@ -317,6 +343,7 @@ public class ArticleAnalysisBussinessImpl implements ArticleAnalysisBussiness {
                 article.setOriginalSiteName(websiteSpider.getOriginalSiteName()); // 来源网站名称
                 article.setOriginalUrl(websiteSpider.getOriginalUrl()); // 来源链接
                 article.setPicUrl(websiteSpider.getPicUrl()); // 图片
+                article.setPubTime(websiteSpider.getPubTime()); // 发布时间
                 articleContent.setSummary(websiteSpider.getSummary()); // 摘要
 
                 Document doc = Jsoup.parse(html);
@@ -344,6 +371,8 @@ public class ArticleAnalysisBussinessImpl implements ArticleAnalysisBussiness {
                 if (content != null) {
                     // 去掉广告
                     content.select("div.gg200x300").remove();
+                    // 去掉视频
+                    content.select("div.video-wrapper").remove();
                     String contentHtml = content.html();
                     contentHtml = removeUselessAttribute(contentHtml);
                     articleContent.setContent(contentHtml);

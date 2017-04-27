@@ -29,10 +29,8 @@ public class StartupController {
     @PostConstruct
     public void startUp() {
         fixedThreadPool = Executors.newFixedThreadPool(10);
-        webSpider();
-//        webArticleAnalysis();
-        fixedThreadPool.shutdown();
-        logger.info("shutDown->all thread shutdown");
+//        webSpider();
+        webArticleAnalysis();
     }
 
     private void webSpider() {
