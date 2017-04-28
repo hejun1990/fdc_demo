@@ -15,6 +15,10 @@ public class Paging implements Serializable {
     /**
      * 起始页
      */
+    private Integer begin;
+    /**
+     * 起始条数
+     */
     private Integer start;
 
     /**
@@ -33,43 +37,47 @@ public class Paging implements Serializable {
     private Integer totlePage;
 
     public Paging() {
+        this.begin = 0;
         this.start = 0;
         this.pageSize = 10;
     }
 
-    public Paging(int start) {
-        if (start > 0) {
-            this.start = start - 1;
+    public Paging(int begin) {
+        if (begin > 0) {
+            this.begin = begin - 1;
         } else {
-            this.start = 0;
+            this.begin = 0;
         }
         this.pageSize = 10;
+        this.start = this.begin * this.pageSize;
     }
 
-    public Paging(int start, int pageSize) {
-        if (start > 0) {
-            this.start = start - 1;
+    public Paging(int begin, int pageSize) {
+        if (begin > 0) {
+            this.begin = begin - 1;
         } else {
-            this.start = 0;
+            this.begin = 0;
         }
         if (pageSize > 0) {
             this.pageSize = pageSize;
         } else {
             this.pageSize = 10;
         }
+        this.start = this.begin * this.pageSize;
     }
 
-    public Paging(int start, int pageSize, int totleCount) {
-        if (start > 0) {
-            this.start = start - 1;
+    public Paging(int begin, int pageSize, int totleCount) {
+        if (begin > 0) {
+            this.begin = begin - 1;
         } else {
-            this.start = 0;
+            this.begin = 0;
         }
         if (pageSize > 0) {
             this.pageSize = pageSize;
         } else {
             this.pageSize = 10;
         }
+        this.start = this.begin * this.pageSize;
         if (totleCount < 0) {
             this.totleCount = 0;
         } else {

@@ -9,6 +9,7 @@ import com.hejun.demo.web.bussiness.ArticleAnalysisBussiness;
 import com.hejun.demo.web.enumeration.ArticleType;
 import com.hejun.demo.web.enumeration.SpiderEntry;
 import com.hejun.demo.web.utils.HttpUtil;
+import org.apache.commons.lang.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -34,7 +35,7 @@ public class ArticleAnalysisBussinessImpl implements ArticleAnalysisBussiness {
     private WebsiteSpiderService websiteSpiderService;
 
     @Override
-    public void extractWebContent() {
+    public void extractWebContent(int begin) {
         // 已经分析的文章数量
         int currentChapter = 1;
         // 当前线程名称
@@ -43,9 +44,8 @@ public class ArticleAnalysisBussinessImpl implements ArticleAnalysisBussiness {
         Map<String, Object> record = new HashMap<>();
         record.put("analysisCount", 0);
         record.put("isDel", 0);
-        record.put("originalSiteCode", SpiderEntry.WANGYI.getCode());
-        Paging paging = new Paging();
-        List<WebsiteSpider> websiteSpiders = websiteSpiderService.selectPageByCondition(record, paging);
+        Paging paging = new Paging(begin);
+        List<WebsiteSpider> websiteSpiders = websiteSpiderService.selectPageByConditionNoOrder(record, paging);
         do {
             for (WebsiteSpider websiteSpider : websiteSpiders) {
                 int originalSiteCode = websiteSpider.getOriginalSiteCode();
@@ -62,7 +62,7 @@ public class ArticleAnalysisBussinessImpl implements ArticleAnalysisBussiness {
                 currentChapter++;
             }
             // 处理完10篇文章，获取新的未处理的10篇文章
-            websiteSpiders = websiteSpiderService.selectPageByCondition(record, paging);
+            websiteSpiders = websiteSpiderService.selectPageByConditionNoOrder(record, paging);
         } while (websiteSpiders != null && !websiteSpiders.isEmpty());
         long endTime = System.currentTimeMillis();
         Object[] logVals = {currentThreadName, (endTime - startTime) / (1000 * 60), ((endTime - startTime) % (1000 * 60)) / 1000};
@@ -80,52 +80,59 @@ public class ArticleAnalysisBussinessImpl implements ArticleAnalysisBussiness {
         boolean handleResult;
         String originalUrl = websiteSpider.getOriginalUrl();
         String html = HttpUtil.httpClientGet(originalUrl);
-        if (html.contains("class=\"article\"")) {
-            try {
-                Article article = new Article();
-                ArticleContent articleContent = new ArticleContent();
+        if (StringUtils.isNotEmpty(html)) {
+            if (html.contains("class=\"article\"")) {
+                try {
+                    Article article = new Article();
+                    ArticleContent articleContent = new ArticleContent();
 
-                article.setArticleType(ArticleType.TECHNOLOGY.getCode()); // 文章类型
-                article.setTitle(websiteSpider.getTitle()); // 标题
-                article.setViceTitle(websiteSpider.getViceTitle()); // 副标题(短标题)
-                article.setAuthor(websiteSpider.getAuthor()); // 作者
-                article.setOriginalSiteCode(websiteSpider.getOriginalSiteCode()); // 来源网站编号
-                article.setOriginalSiteName(websiteSpider.getOriginalSiteName()); // 来源网站名称
-                article.setOriginalUrl(websiteSpider.getOriginalUrl()); // 来源链接
-                article.setPicUrl(websiteSpider.getPicUrl()); // 图片
-                article.setKeywords(websiteSpider.getKeywords()); // 关键字
-                articleContent.setSummary(websiteSpider.getSummary()); // 摘要
+                    article.setArticleType(ArticleType.TECHNOLOGY.getCode()); // 文章类型
+                    article.setTitle(websiteSpider.getTitle()); // 标题
+                    article.setViceTitle(websiteSpider.getViceTitle()); // 副标题(短标题)
+                    article.setAuthor(websiteSpider.getAuthor()); // 作者
+                    article.setOriginalSiteCode(websiteSpider.getOriginalSiteCode()); // 来源网站编号
+                    article.setOriginalSiteName(websiteSpider.getOriginalSiteName()); // 来源网站名称
+                    article.setOriginalUrl(websiteSpider.getOriginalUrl()); // 来源链接
+                    article.setPicUrl(websiteSpider.getPicUrl()); // 图片
+                    article.setKeywords(websiteSpider.getKeywords()); // 关键字
+                    articleContent.setSummary(websiteSpider.getSummary()); // 摘要
 
-                Document doc = Jsoup.parse(html);
-                doc.select("script,noscript,style,iframe,br").remove();
-                // 抓取文章发布时间
-                Element pubTimeEl = doc.select("span#news-time").first();
-                if (pubTimeEl != null) {
-                    String dataVal = pubTimeEl.attr("data-val");
-                    Date date = new Date(Long.parseLong(dataVal));
-                    article.setPubTime(date);
+                    Document doc = Jsoup.parse(html);
+                    doc.select("script,noscript,style,iframe,br").remove();
+                    // 抓取文章发布时间
+                    Element pubTimeEl = doc.select("span#news-time").first();
+                    if (pubTimeEl != null) {
+                        String dataVal = pubTimeEl.attr("data-val");
+                        Date date = new Date(Long.parseLong(dataVal));
+                        article.setPubTime(date);
+                    }
+                    // 抓取文章正文
+                    Element content = doc.select("article.article").first();
+                    if (content != null) {
+                        String contentHtml = content.html();
+                        contentHtml = removeUselessAttribute(contentHtml);
+                        articleContent.setContent(contentHtml);
+                    }
+                    handleResult = websiteSpiderService.handleSpiderContent(websiteSpider, article, articleContent);
+                    Object[] logVals = {currentThreadName, currentChapter, websiteSpider.getTitle(),
+                            handleResult ? "处理成功" : "已经被处理过"};
+                    logger.info("[{}]处理第{}篇文章，来源搜狐科技，标题\"{}\"，结果：{}", logVals);
+                } catch (Exception e) {
+                    Object[] logVals = {currentThreadName, currentChapter, websiteSpider.getTitle(),
+                            e.getMessage()};
+                    logger.error("[{}]处理第{}篇文章，来源搜狐科技，标题\"{}\"，结果异常：{}", logVals);
                 }
-                // 抓取文章正文
-                Element content = doc.select("article.article").first();
-                if (content != null) {
-                    String contentHtml = content.html();
-                    contentHtml = removeUselessAttribute(contentHtml);
-                    articleContent.setContent(contentHtml);
-                }
-                handleResult = websiteSpiderService.handleSpiderContent(websiteSpider, article, articleContent);
+            } else { // 不是一个正规的新闻页面，可能是一个幻灯片网页
+                handleResult = delWebsiteSpider(websiteSpider);
                 Object[] logVals = {currentThreadName, currentChapter, websiteSpider.getTitle(),
-                        handleResult ? "处理成功" : "已经被处理过"};
-                logger.info("[{}]处理第{}篇文章，来源搜狐科技，标题\"{}\"，结果：{}", logVals);
-            } catch (Exception e) {
-                Object[] logVals = {currentThreadName, currentChapter, websiteSpider.getTitle(),
-                        e.getMessage()};
-                logger.error("[{}]处理第{}篇文章，来源搜狐科技，标题\"{}\"，结果异常：{}", logVals);
+                        handleResult ? "删除成功" : "删除失败"};
+                logger.warn("[{}]处理第{}篇文章，来源搜狐科技，标题\"{}\"，结果：非常规文章，{}", logVals);
             }
-        } else { // 不是一个正规的新闻页面，可能是一个幻灯片网页
+        } else {
             handleResult = delWebsiteSpider(websiteSpider);
             Object[] logVals = {currentThreadName, currentChapter, websiteSpider.getTitle(),
                     handleResult ? "删除成功" : "删除失败"};
-            logger.info("[{}]处理第{}篇文章，来源搜狐科技，标题\"{}\"，结果：非常规文章，{}", logVals);
+            logger.warn("[{}]处理第{}篇文章，来源搜狐科技，标题\"{}\"，结果：网页内容为空，{}", logVals);
         }
     }
 
@@ -140,74 +147,81 @@ public class ArticleAnalysisBussinessImpl implements ArticleAnalysisBussiness {
         boolean handleResult;
         String originalUrl = websiteSpider.getOriginalUrl();
         String html = HttpUtil.httpClientGet(originalUrl);
-        if (html.contains("id=\"artibody\"")) {
-            try {
-                Article article = new Article();
-                ArticleContent articleContent = new ArticleContent();
+        if (StringUtils.isNotEmpty(html)) {
+            if (html.contains("id=\"artibody\"")) {
+                try {
+                    Article article = new Article();
+                    ArticleContent articleContent = new ArticleContent();
 
-                article.setArticleType(ArticleType.TECHNOLOGY.getCode()); // 文章类型
-                article.setTitle(websiteSpider.getTitle()); // 标题
-                article.setViceTitle(websiteSpider.getViceTitle()); // 副标题(短标题)
-                article.setAuthor(websiteSpider.getAuthor()); // 作者
-                article.setOriginalSiteCode(websiteSpider.getOriginalSiteCode()); // 来源网站编号
-                article.setOriginalSiteName(websiteSpider.getOriginalSiteName()); // 来源网站名称
-                article.setOriginalUrl(websiteSpider.getOriginalUrl()); // 来源链接
-                article.setPicUrl(websiteSpider.getPicUrl()); // 图片
-                articleContent.setSummary(websiteSpider.getSummary()); // 摘要
+                    article.setArticleType(ArticleType.TECHNOLOGY.getCode()); // 文章类型
+                    article.setTitle(websiteSpider.getTitle()); // 标题
+                    article.setViceTitle(websiteSpider.getViceTitle()); // 副标题(短标题)
+                    article.setAuthor(websiteSpider.getAuthor()); // 作者
+                    article.setOriginalSiteCode(websiteSpider.getOriginalSiteCode()); // 来源网站编号
+                    article.setOriginalSiteName(websiteSpider.getOriginalSiteName()); // 来源网站名称
+                    article.setOriginalUrl(websiteSpider.getOriginalUrl()); // 来源链接
+                    article.setPicUrl(websiteSpider.getPicUrl()); // 图片
+                    articleContent.setSummary(websiteSpider.getSummary()); // 摘要
 
-                Document doc = Jsoup.parse(html);
-                doc.select("script,noscript,style,iframe,br").remove();
-                // 抓取文章关键字
-                Element keywordsEl = doc.select("meta[name=keywords]").first();
-                if (keywordsEl != null) {
-                    String keywords = keywordsEl.attr("content");
-                    String[] keywordsArr = keywords.split(",");
-                    StringBuilder keywordsBuilder = new StringBuilder();
-                    for (String word : keywordsArr) {
-                        keywordsBuilder.append(word);
-                        keywordsBuilder.append(",");
+                    Document doc = Jsoup.parse(html);
+                    doc.select("script,noscript,style,iframe,br").remove();
+                    // 抓取文章关键字
+                    Element keywordsEl = doc.select("meta[name=keywords]").first();
+                    if (keywordsEl != null) {
+                        String keywords = keywordsEl.attr("content");
+                        String[] keywordsArr = keywords.split(",");
+                        StringBuilder keywordsBuilder = new StringBuilder();
+                        for (String word : keywordsArr) {
+                            keywordsBuilder.append(word);
+                            keywordsBuilder.append(",");
+                        }
+                        article.setKeywords(keywordsBuilder.substring(0, keywordsBuilder.length() - 1));
                     }
-                    article.setKeywords(keywordsBuilder.substring(0, keywordsBuilder.length() - 1));
+                    // 抓取文章发布时间
+                    String pubTime = null;
+                    Element pubTimeEl = doc.select("span.titer").first();
+                    if (pubTimeEl != null) {
+                        pubTime = pubTimeEl.text();
+                    }
+                    Element pubTimeWeiboEl = doc.select("span#pub_date").first();
+                    if (pubTimeWeiboEl != null) {
+                        pubTime = pubTimeWeiboEl.text();
+                    }
+                    if (pubTime != null) {
+                        pubTime = pubTime.replace("年", "-").replace("月", "-").replace("日", "");
+                        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                        Date date = formatter.parse(pubTime);
+                        article.setPubTime(date);
+                    }
+                    // 抓取文章正文
+                    Element content = doc.select("div#artibody").first();
+                    if (content != null) {
+                        // 去掉广告
+                        content.select("div.otherContent_01").remove();
+                        String contentHtml = content.html();
+                        contentHtml = removeUselessAttribute(contentHtml);
+                        articleContent.setContent(contentHtml);
+                    }
+                    handleResult = websiteSpiderService.handleSpiderContent(websiteSpider, article, articleContent);
+                    Object[] logVals = {currentThreadName, currentChapter, websiteSpider.getTitle(),
+                            handleResult ? "处理成功" : "已经被处理过"};
+                    logger.info("[{}]处理第{}篇文章，来源新浪科技，标题\"{}\"，结果：{}", logVals);
+                } catch (Exception e) {
+                    Object[] logVals = {currentThreadName, currentChapter, websiteSpider.getTitle(),
+                            e.getMessage()};
+                    logger.error("[{}]处理第{}篇文章，来源新浪科技，标题\"{}\"，结果异常：{}", logVals);
                 }
-                // 抓取文章发布时间
-                String pubTime = null;
-                Element pubTimeEl = doc.select("span.titer").first();
-                if (pubTimeEl != null) {
-                    pubTime = pubTimeEl.text();
-                }
-                Element pubTimeWeiboEl = doc.select("span#pub_date").first();
-                if (pubTimeWeiboEl != null) {
-                    pubTime = pubTimeWeiboEl.text();
-                }
-                if (pubTime != null) {
-                    pubTime = pubTime.replace("年", "-").replace("月", "-").replace("日", "");
-                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-                    Date date = formatter.parse(pubTime);
-                    article.setPubTime(date);
-                }
-                // 抓取文章正文
-                Element content = doc.select("div#artibody").first();
-                if (content != null) {
-                    // 去掉广告
-                    content.select("div.otherContent_01").remove();
-                    String contentHtml = content.html();
-                    contentHtml = removeUselessAttribute(contentHtml);
-                    articleContent.setContent(contentHtml);
-                }
-                handleResult = websiteSpiderService.handleSpiderContent(websiteSpider, article, articleContent);
+            } else { // 不是一个正规的新闻页面，可能是一个幻灯片网页
+                handleResult = delWebsiteSpider(websiteSpider);
                 Object[] logVals = {currentThreadName, currentChapter, websiteSpider.getTitle(),
-                        handleResult ? "处理成功" : "已经被处理过"};
-                logger.info("[{}]处理第{}篇文章，来源新浪科技，标题\"{}\"，结果：{}", logVals);
-            } catch (Exception e) {
-                Object[] logVals = {currentThreadName, currentChapter, websiteSpider.getTitle(),
-                        e.getMessage()};
-                logger.error("[{}]处理第{}篇文章，来源新浪科技，标题\"{}\"，结果异常：{}", logVals);
+                        handleResult ? "删除成功" : "删除失败"};
+                logger.warn("[{}]处理第{}篇文章，来源新浪科技，标题\"{}\"，结果：非常规文章，{}", logVals);
             }
-        } else { // 不是一个正规的新闻页面，可能是一个幻灯片网页
+        } else {
             handleResult = delWebsiteSpider(websiteSpider);
             Object[] logVals = {currentThreadName, currentChapter, websiteSpider.getTitle(),
                     handleResult ? "删除成功" : "删除失败"};
-            logger.info("[{}]处理第{}篇文章，来源新浪科技，标题\"{}\"，结果：非常规文章，{}", logVals);
+            logger.warn("[{}]处理第{}篇文章，来源新浪科技，标题\"{}\"，结果：网页内容为空，{}", logVals);
         }
     }
 
@@ -222,100 +236,107 @@ public class ArticleAnalysisBussinessImpl implements ArticleAnalysisBussiness {
         boolean handleResult;
         String originalUrl = websiteSpider.getOriginalUrl();
         String html = HttpUtil.httpClientGet(originalUrl);
-        if (html.contains("id=\"Cnt-Main-Article-QQ\"")) {
-            try {
-                Article article = new Article();
-                ArticleContent articleContent = new ArticleContent();
+        if (StringUtils.isNotEmpty(html)) {
+            if (html.contains("id=\"Cnt-Main-Article-QQ\"")) {
+                try {
+                    Article article = new Article();
+                    ArticleContent articleContent = new ArticleContent();
 
-                article.setArticleType(ArticleType.TECHNOLOGY.getCode()); // 文章类型
-                article.setTitle(websiteSpider.getTitle()); // 标题
-                article.setViceTitle(websiteSpider.getViceTitle()); // 副标题(短标题)
-                article.setAuthor(websiteSpider.getAuthor()); // 作者
-                article.setOriginalSiteCode(websiteSpider.getOriginalSiteCode()); // 来源网站编号
-                article.setOriginalSiteName(websiteSpider.getOriginalSiteName()); // 来源网站名称
-                article.setOriginalUrl(websiteSpider.getOriginalUrl()); // 来源链接
-                article.setPicUrl(websiteSpider.getPicUrl()); // 图片
-                articleContent.setSummary(websiteSpider.getSummary()); // 摘要
+                    article.setArticleType(ArticleType.TECHNOLOGY.getCode()); // 文章类型
+                    article.setTitle(websiteSpider.getTitle()); // 标题
+                    article.setViceTitle(websiteSpider.getViceTitle()); // 副标题(短标题)
+                    article.setAuthor(websiteSpider.getAuthor()); // 作者
+                    article.setOriginalSiteCode(websiteSpider.getOriginalSiteCode()); // 来源网站编号
+                    article.setOriginalSiteName(websiteSpider.getOriginalSiteName()); // 来源网站名称
+                    article.setOriginalUrl(websiteSpider.getOriginalUrl()); // 来源链接
+                    article.setPicUrl(websiteSpider.getPicUrl()); // 图片
+                    articleContent.setSummary(websiteSpider.getSummary()); // 摘要
 
-                Document doc = Jsoup.parse(html);
-                doc.select("script,noscript,style,iframe,br").remove();
+                    Document doc = Jsoup.parse(html);
+                    doc.select("script,noscript,style,iframe,br").remove();
 
-                // 判断本文是否由腾讯科技机器人Dreamwriter自动撰写
-                boolean isDreamwriter = false;
-                Element dreamwriter = doc.select("span.where").first();
-                if (dreamwriter != null) {
-                    String dreamwriterText = dreamwriter.text();
-                    if ("Dreamwriter".equals(dreamwriterText)) {
-                        isDreamwriter = true;
+                    // 判断本文是否由腾讯科技机器人Dreamwriter自动撰写
+                    boolean isDreamwriter = false;
+                    Element dreamwriter = doc.select("span.where").first();
+                    if (dreamwriter != null) {
+                        String dreamwriterText = dreamwriter.text();
+                        if ("Dreamwriter".equals(dreamwriterText)) {
+                            isDreamwriter = true;
+                        }
                     }
-                }
-                if (!isDreamwriter) {
-                    // 抓取文章关键字
-                    Element keywordsEl = doc.select("meta[name=keywords]").first();
-                    if (keywordsEl != null) {
-                        String keywords = keywordsEl.attr("content");
-                        String[] keywordsArr = keywords.split(",");
-                        if (keywordsArr.length > 1) {
-                            StringBuilder keywordsBuilder = new StringBuilder();
-                            for (int i = 1; i < keywordsArr.length; i++) {
-                                if (i != 1) {
-                                    keywordsBuilder.append(",");
+                    if (!isDreamwriter) {
+                        // 抓取文章关键字
+                        Element keywordsEl = doc.select("meta[name=keywords]").first();
+                        if (keywordsEl != null) {
+                            String keywords = keywordsEl.attr("content");
+                            String[] keywordsArr = keywords.split(",");
+                            if (keywordsArr.length > 1) {
+                                StringBuilder keywordsBuilder = new StringBuilder();
+                                for (int i = 1; i < keywordsArr.length; i++) {
+                                    if (i != 1) {
+                                        keywordsBuilder.append(",");
+                                    }
+                                    keywordsBuilder.append(keywordsArr[i]);
                                 }
-                                keywordsBuilder.append(keywordsArr[i]);
+                                article.setKeywords(keywordsBuilder.toString());
                             }
-                            article.setKeywords(keywordsBuilder.toString());
                         }
-                    }
-                    // 抓取文章作者（文章来源）
-                    Element authorEl = doc.select("span.a_source").first();
-                    if (authorEl != null) {
-                        Element link = authorEl.select("a[href]").first();
-                        String author;
-                        if (link != null) {
-                            author = link.text();
-                        } else {
-                            author = authorEl.text();
+                        // 抓取文章作者（文章来源）
+                        Element authorEl = doc.select("span.a_source").first();
+                        if (authorEl != null) {
+                            Element link = authorEl.select("a[href]").first();
+                            String author;
+                            if (link != null) {
+                                author = link.text();
+                            } else {
+                                author = authorEl.text();
+                            }
+                            article.setAuthor(author);
                         }
-                        article.setAuthor(author);
-                    }
-                    // 抓取文章发布时间
-                    Element pubTimeEl = doc.select("span.a_time").first();
-                    if (pubTimeEl != null) {
-                        String pubTime = pubTimeEl.text();
-                        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-                        Date date = formatter.parse(pubTime);
-                        article.setPubTime(date);
-                    }
-                    // 抓取文章正文
-                    Element content = doc.select("div#Cnt-Main-Article-QQ").first();
-                    if (content != null) {
-                        // 去掉视频
-                        content.select("div.rv-js-root").remove();
-                        String contentHtml = content.html();
-                        contentHtml = removeUselessAttribute(contentHtml);
-                        articleContent.setContent(contentHtml);
-                    }
+                        // 抓取文章发布时间
+                        Element pubTimeEl = doc.select("span.a_time").first();
+                        if (pubTimeEl != null) {
+                            String pubTime = pubTimeEl.text();
+                            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                            Date date = formatter.parse(pubTime);
+                            article.setPubTime(date);
+                        }
+                        // 抓取文章正文
+                        Element content = doc.select("div#Cnt-Main-Article-QQ").first();
+                        if (content != null) {
+                            // 去掉视频
+                            content.select("div.rv-js-root").remove();
+                            String contentHtml = content.html();
+                            contentHtml = removeUselessAttribute(contentHtml);
+                            articleContent.setContent(contentHtml);
+                        }
 
-                    handleResult = websiteSpiderService.handleSpiderContent(websiteSpider, article, articleContent);
+                        handleResult = websiteSpiderService.handleSpiderContent(websiteSpider, article, articleContent);
+                        Object[] logVals = {currentThreadName, currentChapter, websiteSpider.getTitle(),
+                                handleResult ? "处理成功" : "已经被处理过"};
+                        logger.info("[{}]处理第{}篇文章，来源腾讯科技，标题\"{}\"，结果：{}", logVals);
+                    } else {
+                        handleResult = delWebsiteSpider(websiteSpider);
+                        Object[] logVals = {currentThreadName, currentChapter, websiteSpider.getTitle(),
+                                handleResult ? "删除成功" : "删除失败"};
+                        logger.warn("[{}]处理完第{}篇文章，来源腾讯科技，标题\"{}\"，结果：本文由腾讯科技机器人Dreamwriter自动撰写，{}", logVals);
+                    }
+                } catch (Exception e) {
                     Object[] logVals = {currentThreadName, currentChapter, websiteSpider.getTitle(),
-                            handleResult ? "处理成功" : "已经被处理过"};
-                    logger.info("[{}]处理第{}篇文章，来源腾讯科技，标题\"{}\"，结果：{}", logVals);
-                } else {
-                    handleResult = delWebsiteSpider(websiteSpider);
-                    Object[] logVals = {currentThreadName, currentChapter, websiteSpider.getTitle(),
-                            handleResult ? "删除成功" : "删除失败"};
-                    logger.info("[{}]处理完第{}篇文章，来源腾讯科技，标题\"{}\"，结果：本文由腾讯科技机器人Dreamwriter自动撰写，{}", logVals);
+                            e.getMessage()};
+                    logger.error("[{}]处理第{}篇文章，来源腾讯科技，标题\"{}\"，结果异常：{}", logVals);
                 }
-            } catch (Exception e) {
+            } else { // 不是一个正规的新闻页面，可能是一个幻灯片网页
+                handleResult = delWebsiteSpider(websiteSpider);
                 Object[] logVals = {currentThreadName, currentChapter, websiteSpider.getTitle(),
-                        e.getMessage()};
-                logger.error("[{}]处理第{}篇文章，来源腾讯科技，标题\"{}\"，结果异常：{}", logVals);
+                        handleResult ? "删除成功" : "删除失败"};
+                logger.warn("[{}]处理完第{}篇文章，来源腾讯科技，标题\"{}\"，结果：非常规文章，{}", logVals);
             }
-        } else { // 不是一个正规的新闻页面，可能是一个幻灯片网页
+        } else {
             handleResult = delWebsiteSpider(websiteSpider);
             Object[] logVals = {currentThreadName, currentChapter, websiteSpider.getTitle(),
                     handleResult ? "删除成功" : "删除失败"};
-            logger.info("[{}]处理完第{}篇文章，来源腾讯科技，标题\"{}\"，结果：非常规文章，{}", logVals);
+            logger.warn("[{}]处理第{}篇文章，来源腾讯科技，标题\"{}\"，结果：网页内容为空，{}", logVals);
         }
     }
 
@@ -330,67 +351,74 @@ public class ArticleAnalysisBussinessImpl implements ArticleAnalysisBussiness {
         boolean handleResult;
         String originalUrl = websiteSpider.getOriginalUrl();
         String html = HttpUtil.httpClientGet(originalUrl);
-        if (html.contains("class=\"post_text\"")) {
-            try {
-                Article article = new Article();
-                ArticleContent articleContent = new ArticleContent();
+        if (StringUtils.isNotEmpty(html)) {
+            if (html.contains("class=\"post_text\"")) {
+                try {
+                    Article article = new Article();
+                    ArticleContent articleContent = new ArticleContent();
 
-                article.setArticleType(ArticleType.TECHNOLOGY.getCode()); // 文章类型
-                article.setTitle(websiteSpider.getTitle()); // 标题
-                article.setViceTitle(websiteSpider.getViceTitle()); // 副标题(短标题)
-                article.setAuthor(websiteSpider.getAuthor()); // 作者
-                article.setOriginalSiteCode(websiteSpider.getOriginalSiteCode()); // 来源网站编号
-                article.setOriginalSiteName(websiteSpider.getOriginalSiteName()); // 来源网站名称
-                article.setOriginalUrl(websiteSpider.getOriginalUrl()); // 来源链接
-                article.setPicUrl(websiteSpider.getPicUrl()); // 图片
-                article.setPubTime(websiteSpider.getPubTime()); // 发布时间
-                articleContent.setSummary(websiteSpider.getSummary()); // 摘要
+                    article.setArticleType(ArticleType.TECHNOLOGY.getCode()); // 文章类型
+                    article.setTitle(websiteSpider.getTitle()); // 标题
+                    article.setViceTitle(websiteSpider.getViceTitle()); // 副标题(短标题)
+                    article.setAuthor(websiteSpider.getAuthor()); // 作者
+                    article.setOriginalSiteCode(websiteSpider.getOriginalSiteCode()); // 来源网站编号
+                    article.setOriginalSiteName(websiteSpider.getOriginalSiteName()); // 来源网站名称
+                    article.setOriginalUrl(websiteSpider.getOriginalUrl()); // 来源链接
+                    article.setPicUrl(websiteSpider.getPicUrl()); // 图片
+                    article.setPubTime(websiteSpider.getPubTime()); // 发布时间
+                    articleContent.setSummary(websiteSpider.getSummary()); // 摘要
 
-                Document doc = Jsoup.parse(html);
-                doc.select("script,noscript,style,iframe,br").remove();
-                // 抓取文章关键字
-                Element keywordsEl = doc.select("meta[name=keywords]").first();
-                if (keywordsEl != null) {
-                    String keywords = keywordsEl.attr("content");
-                    String[] keywordsArr = keywords.split(",");
-                    StringBuilder keywordsBuilder = new StringBuilder();
-                    for (String word : keywordsArr) {
-                        keywordsBuilder.append(word);
-                        keywordsBuilder.append(",");
+                    Document doc = Jsoup.parse(html);
+                    doc.select("script,noscript,style,iframe,br").remove();
+                    // 抓取文章关键字
+                    Element keywordsEl = doc.select("meta[name=keywords]").first();
+                    if (keywordsEl != null) {
+                        String keywords = keywordsEl.attr("content");
+                        String[] keywordsArr = keywords.split(",");
+                        StringBuilder keywordsBuilder = new StringBuilder();
+                        for (String word : keywordsArr) {
+                            keywordsBuilder.append(word);
+                            keywordsBuilder.append(",");
+                        }
+                        article.setKeywords(keywordsBuilder.substring(0, keywordsBuilder.length() - 1));
                     }
-                    article.setKeywords(keywordsBuilder.substring(0, keywordsBuilder.length() - 1));
+                    // 抓取文章作者（文章来源）
+                    Element authorEl = doc.select("a#ne_article_source").first();
+                    if (authorEl != null) {
+                        String author = authorEl.text();
+                        article.setAuthor(author);
+                    }
+                    // 抓取文章正文
+                    Element content = doc.select("div#endText.post_text").first();
+                    if (content != null) {
+                        // 去掉广告
+                        content.select("div.gg200x300").remove();
+                        // 去掉视频
+                        content.select("div.video-wrapper").remove();
+                        String contentHtml = content.html();
+                        contentHtml = removeUselessAttribute(contentHtml);
+                        articleContent.setContent(contentHtml);
+                    }
+                    handleResult = websiteSpiderService.handleSpiderContent(websiteSpider, article, articleContent);
+                    Object[] logVals = {currentThreadName, currentChapter, websiteSpider.getTitle(),
+                            handleResult ? "处理成功" : "已经被处理过"};
+                    logger.info("[{}]处理第{}篇文章，来源网易科技，标题\"{}\"，结果：{}", logVals);
+                } catch (Exception e) {
+                    Object[] logVals = {currentThreadName, currentChapter, websiteSpider.getTitle(),
+                            e.getMessage()};
+                    logger.error("[{}]处理第{}篇文章，来源网易科技，标题\"{}\"，结果异常：{}", logVals);
                 }
-                // 抓取文章作者（文章来源）
-                Element authorEl = doc.select("a#ne_article_source").first();
-                if (authorEl != null) {
-                    String author = authorEl.text();
-                    article.setAuthor(author);
-                }
-                // 抓取文章正文
-                Element content = doc.select("div#endText.post_text").first();
-                if (content != null) {
-                    // 去掉广告
-                    content.select("div.gg200x300").remove();
-                    // 去掉视频
-                    content.select("div.video-wrapper").remove();
-                    String contentHtml = content.html();
-                    contentHtml = removeUselessAttribute(contentHtml);
-                    articleContent.setContent(contentHtml);
-                }
-                handleResult = websiteSpiderService.handleSpiderContent(websiteSpider, article, articleContent);
+            } else { // 不是一个正规的新闻页面，可能是一个幻灯片网页
+                handleResult = delWebsiteSpider(websiteSpider);
                 Object[] logVals = {currentThreadName, currentChapter, websiteSpider.getTitle(),
-                        handleResult ? "处理成功" : "已经被处理过"};
-                logger.info("[{}]处理第{}篇文章，来源网易科技，标题\"{}\"，结果：{}", logVals);
-            } catch (Exception e) {
-                Object[] logVals = {currentThreadName, currentChapter, websiteSpider.getTitle(),
-                        e.getMessage()};
-                logger.error("[{}]处理第{}篇文章，来源网易科技，标题\"{}\"，结果异常：{}", logVals);
+                        handleResult ? "删除成功" : "删除失败"};
+                logger.info("[{}]处理完第{}篇文章，来源网易科技，标题\"{}\"，结果：非常规文章，{}", logVals);
             }
-        } else { // 不是一个正规的新闻页面，可能是一个幻灯片网页
+        } else {
             handleResult = delWebsiteSpider(websiteSpider);
             Object[] logVals = {currentThreadName, currentChapter, websiteSpider.getTitle(),
                     handleResult ? "删除成功" : "删除失败"};
-            logger.info("[{}]处理完第{}篇文章，来源网易科技，标题\"{}\"，结果：非常规文章，{}", logVals);
+            logger.warn("[{}]处理第{}篇文章，来源网易科技，标题\"{}\"，结果：网页内容为空，{}", logVals);
         }
     }
 

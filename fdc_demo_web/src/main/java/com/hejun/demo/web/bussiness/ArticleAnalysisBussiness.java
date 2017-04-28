@@ -6,6 +6,8 @@ package com.hejun.demo.web.bussiness;
 public interface ArticleAnalysisBussiness {
     /**
      * 提取网页正文
+     *
+     * @param begin 起始页
      */
-    void extractWebContent();
+    void extractWebContent(int begin);
 }

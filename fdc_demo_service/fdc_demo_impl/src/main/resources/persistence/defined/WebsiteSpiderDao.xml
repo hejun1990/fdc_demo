@@ -114,6 +114,52 @@
             </if>
         </where>
     </select>
+    <select id="selectPageByConditionNoOrder" resultMap="BaseResultMap" parameterType="java.util.Map">
+        select
+        <include refid="Base_Column_List"/>
+        from website_spider
+        <where>
+            <if test="record.title != null">
+                and title = #{record.title}
+            </if>
+            <if test="record.viceTitle != null">
+                and vice_title = #{record.viceTitle}
+            </if>
+            <if test="record.author != null">
+                and author = #{record.author}
+            </if>
+            <if test="record.originalSiteCode != null">
+                and original_site_code = #{record.originalSiteCode}
+            </if>
+            <if test="record.originalSiteName != null">
+                and original_site_name = #{record.originalSiteName}
+            </if>
+            <if test="record.originalUrl != null">
+                and original_url = #{record.originalUrl}
+            </if>
+            <if test="record.picUrl != null">
+                and pic_url = #{record.picUrl}
+            </if>
+            <if test="record.analysisCount != null">
+                and analysis_count = #{record.analysisCount}
+            </if>
+            <if test="record.keywords != null">
+                and keywords = #{record.keywords}
+            </if>
+            <if test="record.pubTime != null">
+                and pubTime = #{record.pub_time}
+            </if>
+            <if test="record.version != null">
+                and version = #{record.version}
+            </if>
+            <if test="record.isDel != null">
+                and is_del = #{record.isDel}
+            </if>
+        </where>
+        <if test="paging != null and paging.start != null and paging.pageSize != null">
+            limit ${paging.start}, ${paging.pageSize}
+        </if>
+    </select>
     <update id="updateByConditionSelective" parameterType="java.util.Map">
         update website_spider
         <set>

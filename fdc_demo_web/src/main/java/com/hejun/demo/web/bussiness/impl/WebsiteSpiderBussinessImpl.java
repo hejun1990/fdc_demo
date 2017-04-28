@@ -212,7 +212,8 @@ public class WebsiteSpiderBussinessImpl implements WebsiteSpiderBussiness {
                                 websiteSpider.setOriginalSiteCode(SpiderEntry.SINA.getCode());
                                 websiteSpider.setOriginalSiteName(SpiderEntry.SINA.getName());
                                 websiteSpider.setTitle(title);
-                                long ctime = article.getLongValue("ctime");
+                                // 要乘以1000，因为爬取的时间是秒要转换成毫秒
+                                long ctime = article.getLongValue("ctime") * 1000;
                                 websiteSpider.setPubTime(new Date(ctime));
                                 String stitle = article.getString("stitle");
                                 if (StringUtils.isNotEmpty(stitle)) {

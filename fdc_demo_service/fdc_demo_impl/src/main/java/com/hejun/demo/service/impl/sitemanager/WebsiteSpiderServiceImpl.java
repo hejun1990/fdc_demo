@@ -88,6 +88,11 @@ public class WebsiteSpiderServiceImpl implements WebsiteSpiderService {
     }
 
     @Override
+    public List<WebsiteSpider> selectPageByConditionNoOrder(Map<String, Object> record, Paging paging) {
+        return websiteSpiderDao.selectPageByConditionNoOrder(record, paging);
+    }
+
+    @Override
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public boolean handleSpiderContent(WebsiteSpider websiteSpider, Article article, ArticleContent articleContent) {
         WebsiteSpider spiderRecord = new WebsiteSpider();

@@ -31,6 +31,8 @@ public interface WebsiteSpiderService {
 
     boolean deleteByConditionSelective(WebsiteSpider record, WebsiteSpider example);
 
+    List<WebsiteSpider> selectPageByConditionNoOrder(Map<String, Object> record, Paging paging);
+
     /**
      * 处理爬取文章的正文
      *

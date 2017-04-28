@@ -70,25 +70,25 @@ public class StartupController {
         fixedThreadPool.execute(new Runnable() {
             @Override
             public void run() {
-                articleAnalysisBussiness.extractWebContent();
+                articleAnalysisBussiness.extractWebContent(1);
             }
         });
         fixedThreadPool.execute(new Runnable() {
             @Override
             public void run() {
-                articleAnalysisBussiness.extractWebContent();
+                articleAnalysisBussiness.extractWebContent(2);
             }
         });
         fixedThreadPool.execute(new Runnable() {
             @Override
             public void run() {
-                articleAnalysisBussiness.extractWebContent();
+                articleAnalysisBussiness.extractWebContent(3);
             }
         });
         fixedThreadPool.execute(new Runnable() {
             @Override
             public void run() {
-                articleAnalysisBussiness.extractWebContent();
+                articleAnalysisBussiness.extractWebContent(4);
             }
         });
     }

@@ -16,4 +16,6 @@ public interface WebsiteSpiderDao {
     List<WebsiteSpider> selectPageByCondition(@Param("record") Map<String, Object> record, @Param("paging") Paging paging);
 
     int updateByConditionSelective(@Param("record") WebsiteSpider record, @Param("example") WebsiteSpider example);
+
+    List<WebsiteSpider> selectPageByConditionNoOrder(@Param("record") Map<String, Object> record, @Param("paging") Paging paging);
 }
