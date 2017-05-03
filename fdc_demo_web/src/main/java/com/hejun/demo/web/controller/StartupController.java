@@ -85,11 +85,5 @@ public class StartupController {
                 articleAnalysisBussiness.extractWebContent(3);
             }
         });
-        fixedThreadPool.execute(new Runnable() {
-            @Override
-            public void run() {
-                articleAnalysisBussiness.extractWebContent(4);
-            }
-        });
     }
 }

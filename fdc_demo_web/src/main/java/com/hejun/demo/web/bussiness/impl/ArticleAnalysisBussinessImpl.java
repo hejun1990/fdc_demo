@@ -18,11 +18,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by hejun-FDC on 2017/4/17.
@@ -44,6 +47,7 @@ public class ArticleAnalysisBussinessImpl implements ArticleAnalysisBussiness {
         Map<String, Object> record = new HashMap<>();
         record.put("analysisCount", 0);
         record.put("isDel", 0);
+//        record.put("originalUrl", "http://tech.sina.com.cn/it/2016-01-24/doc-ifxnuvxc1810380.shtml");
         Paging paging = new Paging(begin);
         List<WebsiteSpider> websiteSpiders = websiteSpiderService.selectPageByConditionNoOrder(record, paging);
         do {
@@ -119,8 +123,8 @@ public class ArticleAnalysisBussinessImpl implements ArticleAnalysisBussiness {
                     logger.info("[{}]处理第{}篇文章，来源搜狐科技，标题\"{}\"，结果：{}", logVals);
                 } catch (Exception e) {
                     Object[] logVals = {currentThreadName, currentChapter, websiteSpider.getTitle(),
-                            e.getMessage()};
-                    logger.error("[{}]处理第{}篇文章，来源搜狐科技，标题\"{}\"，结果异常：{}", logVals);
+                            e.getMessage(), websiteSpider.getOriginalUrl()};
+                    logger.error("[{}]处理第{}篇文章，来源搜狐科技，标题\"{}\"，结果异常：{}, 网址：{}", logVals);
                 }
             } else { // 不是一个正规的新闻页面，可能是一个幻灯片网页
                 handleResult = delWebsiteSpider(websiteSpider);
@@ -146,10 +150,13 @@ public class ArticleAnalysisBussinessImpl implements ArticleAnalysisBussiness {
     private void extractSinaWebContent(WebsiteSpider websiteSpider, String currentThreadName, int currentChapter) {
         boolean handleResult;
         String originalUrl = websiteSpider.getOriginalUrl();
-        String html = HttpUtil.httpClientGet(originalUrl);
+        String html = HttpUtil.httpClientGet(originalUrl, "ISO-8859-1");
         if (StringUtils.isNotEmpty(html)) {
             if (html.contains("id=\"artibody\"")) {
                 try {
+                    // 用网页声明的字符集对网页内容编码
+                    html = charsetAnalyzeHtml(html);
+
                     Article article = new Article();
                     ArticleContent articleContent = new ArticleContent();
 
@@ -178,21 +185,35 @@ public class ArticleAnalysisBussinessImpl implements ArticleAnalysisBussiness {
                         article.setKeywords(keywordsBuilder.substring(0, keywordsBuilder.length() - 1));
                     }
                     // 抓取文章发布时间
-                    String pubTime = null;
                     Element pubTimeEl = doc.select("span.titer").first();
                     if (pubTimeEl != null) {
-                        pubTime = pubTimeEl.text();
+                        String pubTime = pubTimeEl.text();
+                        if (pubTime != null) {
+                            pubTime = pubTime.replace("年", "-").replace("月", "-").replace("日", "");
+                            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                            Date date = formatter.parse(pubTime);
+                            article.setPubTime(date);
+                        }
                     }
                     Element pubTimeWeiboEl = doc.select("span#pub_date").first();
                     if (pubTimeWeiboEl != null) {
-                        pubTime = pubTimeWeiboEl.text();
+                        String pubTime = pubTimeWeiboEl.html();
+                        if (pubTime != null) {
+                            if (pubTime.contains("&nbsp;")) {
+                                pubTime = pubTime.replace("&nbsp;", " ").replace("日", "");
+                            }
+                            if (!pubTime.contains(" ")) {
+                                pubTime = pubTime.replace("日", " ");
+                            } else {
+                                pubTime = pubTime.replace("日", "");
+                            }
+                            pubTime = pubTime.replace("年", "-").replace("月", "-");
+                            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                            Date date = formatter.parse(pubTime);
+                            article.setPubTime(date);
+                        }
                     }
-                    if (pubTime != null) {
-                        pubTime = pubTime.replace("年", "-").replace("月", "-").replace("日", "");
-                        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-                        Date date = formatter.parse(pubTime);
-                        article.setPubTime(date);
-                    }
+
                     // 抓取文章正文
                     Element content = doc.select("div#artibody").first();
                     if (content != null) {
@@ -208,8 +229,8 @@ public class ArticleAnalysisBussinessImpl implements ArticleAnalysisBussiness {
                     logger.info("[{}]处理第{}篇文章，来源新浪科技，标题\"{}\"，结果：{}", logVals);
                 } catch (Exception e) {
                     Object[] logVals = {currentThreadName, currentChapter, websiteSpider.getTitle(),
-                            e.getMessage()};
-                    logger.error("[{}]处理第{}篇文章，来源新浪科技，标题\"{}\"，结果异常：{}", logVals);
+                            e.getMessage(), websiteSpider.getOriginalUrl()};
+                    logger.error("[{}]处理第{}篇文章，来源新浪科技，标题\"{}\"，结果异常：{}, 网址：{}", logVals);
                 }
             } else { // 不是一个正规的新闻页面，可能是一个幻灯片网页
                 handleResult = delWebsiteSpider(websiteSpider);
@@ -323,8 +344,8 @@ public class ArticleAnalysisBussinessImpl implements ArticleAnalysisBussiness {
                     }
                 } catch (Exception e) {
                     Object[] logVals = {currentThreadName, currentChapter, websiteSpider.getTitle(),
-                            e.getMessage()};
-                    logger.error("[{}]处理第{}篇文章，来源腾讯科技，标题\"{}\"，结果异常：{}", logVals);
+                            e.getMessage(), websiteSpider.getOriginalUrl()};
+                    logger.error("[{}]处理第{}篇文章，来源腾讯科技，标题\"{}\"，结果异常：{}, 网址：{}", logVals);
                 }
             } else { // 不是一个正规的新闻页面，可能是一个幻灯片网页
                 handleResult = delWebsiteSpider(websiteSpider);
@@ -405,8 +426,8 @@ public class ArticleAnalysisBussinessImpl implements ArticleAnalysisBussiness {
                     logger.info("[{}]处理第{}篇文章，来源网易科技，标题\"{}\"，结果：{}", logVals);
                 } catch (Exception e) {
                     Object[] logVals = {currentThreadName, currentChapter, websiteSpider.getTitle(),
-                            e.getMessage()};
-                    logger.error("[{}]处理第{}篇文章，来源网易科技，标题\"{}\"，结果异常：{}", logVals);
+                            e.getMessage(), websiteSpider.getOriginalUrl()};
+                    logger.error("[{}]处理第{}篇文章，来源网易科技，标题\"{}\"，结果异常：{}, 网址：{}", logVals);
                 }
             } else { // 不是一个正规的新闻页面，可能是一个幻灯片网页
                 handleResult = delWebsiteSpider(websiteSpider);
@@ -470,5 +491,42 @@ public class ArticleAnalysisBussinessImpl implements ArticleAnalysisBussiness {
         example.setId(id);
         example.setVersion(version);
         return websiteSpiderService.deleteByConditionSelective(record, example);
+    }
+
+    /**
+     * 用网页声明的字符集对网页内容编码
+     *
+     * @param html 网页内容
+     * @return 重新编码的网页内容
+     * @throws UnsupportedEncodingException
+     */
+    private String charsetAnalyzeHtml(String html) throws UnsupportedEncodingException {
+        Document doc = Jsoup.parse(html);
+        Element charsetH4 = doc.select("meta[http-equiv=Content-type]").first();
+        if (charsetH4 != null) {
+            String content = charsetH4.attr("content");
+            String pattern = ".*?charset=(.+)";
+            Pattern p = Pattern.compile(pattern);
+            Matcher m = p.matcher(content);
+            if (m.find()) {
+                String charset = m.group(1);
+                if ("UTF-8".equalsIgnoreCase(charset)
+                        || "GBK".equalsIgnoreCase(charset)
+                        || "GB2312".equalsIgnoreCase(charset)) {
+                    html = new String(html.getBytes("ISO-8859-1"), charset);
+                }
+            }
+        }
+
+        Element charsetH5 = doc.select("meta[charset]").first();
+        if (charsetH5 != null) {
+            String charset = charsetH5.attr("charset");
+            if ("UTF-8".equalsIgnoreCase(charset)
+                    || "GBK".equalsIgnoreCase(charset)
+                    || "GB2312".equalsIgnoreCase(charset)) {
+                html = new String(html.getBytes("ISO-8859-1"), charset);
+            }
+        }
+        return html;
     }
 }
