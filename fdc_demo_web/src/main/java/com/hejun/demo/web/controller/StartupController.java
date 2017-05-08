@@ -30,7 +30,8 @@ public class StartupController {
     public void startUp() {
         fixedThreadPool = Executors.newFixedThreadPool(10);
 //        webSpider();
-        webArticleAnalysis();
+//        webArticleAnalysis();
+        repairWebArticlePubtime();
     }
 
     private void webSpider() {
@@ -83,6 +84,27 @@ public class StartupController {
             @Override
             public void run() {
                 articleAnalysisBussiness.extractWebContent(3);
+            }
+        });
+    }
+
+    private void repairWebArticlePubtime() {
+        fixedThreadPool.execute(new Runnable() {
+            @Override
+            public void run() {
+                articleAnalysisBussiness.repairWebArticlePubtime(1);
+            }
+        });
+        fixedThreadPool.execute(new Runnable() {
+            @Override
+            public void run() {
+                articleAnalysisBussiness.repairWebArticlePubtime(2);
+            }
+        });
+        fixedThreadPool.execute(new Runnable() {
+            @Override
+            public void run() {
+                articleAnalysisBussiness.repairWebArticlePubtime(3);
             }
         });
     }

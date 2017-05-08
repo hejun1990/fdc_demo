@@ -4,6 +4,7 @@ import com.hejun.demo.service.inter.domain.defined.Paging;
 import com.hejun.demo.service.inter.domain.generation.Article;
 import com.hejun.demo.service.inter.domain.generation.ArticleContent;
 import com.hejun.demo.service.inter.domain.generation.WebsiteSpider;
+import com.hejun.demo.service.inter.service.sitemanager.ArticleService;
 import com.hejun.demo.service.inter.service.sitemanager.WebsiteSpiderService;
 import com.hejun.demo.web.bussiness.ArticleAnalysisBussiness;
 import com.hejun.demo.web.enumeration.ArticleType;
@@ -37,6 +38,9 @@ public class ArticleAnalysisBussinessImpl implements ArticleAnalysisBussiness {
     @Autowired
     private WebsiteSpiderService websiteSpiderService;
 
+    @Autowired
+    private ArticleService articleService;
+
     @Override
     public void extractWebContent(int begin) {
         // 已经分析的文章数量
@@ -47,7 +51,7 @@ public class ArticleAnalysisBussinessImpl implements ArticleAnalysisBussiness {
         Map<String, Object> record = new HashMap<>();
         record.put("analysisCount", 0);
         record.put("isDel", 0);
-//        record.put("originalUrl", "http://tech.sina.com.cn/it/2016-01-24/doc-ifxnuvxc1810380.shtml");
+//        record.put("originalUrl", "http://tech.163.com/15/1127/05/B9DE859T000915BF.html");
         Paging paging = new Paging(begin);
         List<WebsiteSpider> websiteSpiders = websiteSpiderService.selectPageByConditionNoOrder(record, paging);
         do {
@@ -286,18 +290,47 @@ public class ArticleAnalysisBussinessImpl implements ArticleAnalysisBussiness {
                         }
                     }
                     if (!isDreamwriter) {
+                        boolean compatibleModel = false; // 判断网页是否是兼容模式
+                        Element compatibleEl = doc.select("meta[http-equiv=X-UA-Compatible]").first();
+                        if (compatibleEl != null) {
+                            String content = compatibleEl.attr("content");
+                            if (!"IE=edge".equals(content)) {
+                                compatibleModel = true;
+                            }
+                        }
                         // 抓取文章关键字
                         Element keywordsEl = doc.select("meta[name=keywords]").first();
                         if (keywordsEl != null) {
-                            String keywords = keywordsEl.attr("content");
-                            String[] keywordsArr = keywords.split(",");
+                            String keywordsText = keywordsEl.attr("content");
+                            String[] keywordsArr;
+                            if (compatibleModel) { // 兼容模式
+                                keywordsArr = keywordsText.split(";");
+                            } else { // 最新模式
+                                keywordsArr = keywordsText.split(",");
+                            }
                             if (keywordsArr.length > 1) {
                                 StringBuilder keywordsBuilder = new StringBuilder();
                                 for (int i = 1; i < keywordsArr.length; i++) {
                                     if (i != 1) {
                                         keywordsBuilder.append(",");
                                     }
-                                    keywordsBuilder.append(keywordsArr[i]);
+                                    String keywords = keywordsArr[i];
+                                    if (keywords.length() > 32) { // 关键字长度过长，检查是否可以再度拆分
+                                        if (keywords.contains(" ")) {
+                                            String[] miniKeyArr = keywords.split(" ");
+                                            for (int j = 0; j < miniKeyArr.length; j++) {
+                                                String miniWord = miniKeyArr[j];
+                                                if (miniWord.length() < 32) {
+                                                    if (j != 0) {
+                                                        keywordsBuilder.append(",");
+                                                    }
+                                                    keywordsBuilder.append(miniWord);
+                                                }
+                                            }
+                                        }
+                                    } else {
+                                        keywordsBuilder.append(keywords);
+                                    }
                                 }
                                 article.setKeywords(keywordsBuilder.toString());
                             }
@@ -318,6 +351,14 @@ public class ArticleAnalysisBussinessImpl implements ArticleAnalysisBussiness {
                         Element pubTimeEl = doc.select("span.a_time").first();
                         if (pubTimeEl != null) {
                             String pubTime = pubTimeEl.text();
+                            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                            Date date = formatter.parse(pubTime);
+                            article.setPubTime(date);
+                        }
+                        Element pubTimeOldEl = doc.select("span.pubTime").first();
+                        if (pubTimeOldEl != null) {
+                            String pubTime = pubTimeOldEl.text();
+                            pubTime = pubTime.replace("年", "-").replace("月", "-").replace("日", " ");
                             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
                             Date date = formatter.parse(pubTime);
                             article.setPubTime(date);
@@ -528,5 +569,66 @@ public class ArticleAnalysisBussinessImpl implements ArticleAnalysisBussiness {
             }
         }
         return html;
+    }
+
+    @Override
+    public void repairWebArticlePubtime(int begin) {
+        int currentChapter = 1;
+        // 当前线程名称
+        String currentThreadName = Thread.currentThread().getName();
+        Map<String, Object> record = new HashMap<>();
+        record.put("hql", "pub_time IS NULL");
+        record.put("isDel", 0);
+        Paging paging = new Paging(begin);
+        List<Article> articles = articleService.selectPageByConditionNoOrder(record, paging);
+        do {
+            for (Article article : articles) {
+                boolean handleResult;
+                String originalUrl = article.getOriginalUrl();
+                String html = HttpUtil.httpClientGet(originalUrl);
+                if (StringUtils.isNotEmpty(html)) {
+                    if (html.contains("id=\"Cnt-Main-Article-QQ\"")) {
+                        try {
+                            Document doc = Jsoup.parse(html);
+                            doc.select("script,noscript,style,iframe,br").remove();
+
+                            // 抓取文章发布时间
+                            Element pubTimeEl = doc.select("span.a_time").first();
+                            if (pubTimeEl != null) {
+                                String pubTime = pubTimeEl.text();
+                                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                                Date date = formatter.parse(pubTime);
+                                article.setPubTime(date);
+                            }
+                            Element pubTimeOldEl = doc.select("span.pubTime").first();
+                            if (pubTimeOldEl != null) {
+                                String pubTime = pubTimeOldEl.text();
+                                pubTime = pubTime.replace("年", "-").replace("月", "-").replace("日", " ");
+                                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                                Date date = formatter.parse(pubTime);
+                                article.setPubTime(date);
+                            }
+
+                            handleResult = articleService.repairWebArticlePubtime(article);
+                            Object[] logVals = {currentThreadName, currentChapter, article.getTitle()};
+                            if (handleResult) {
+                                logger.info("[{}]修复发布时间第{}篇，来源腾讯科技，标题\"{}\"，结果：成功", logVals);
+                            } else {
+                                logger.warn("[{}]修复发布时间第{}篇，来源腾讯科技，标题\"{}\"，结果：已经处理过", logVals);
+                            }
+                        } catch (Exception e) {
+                            Object[] logVals = {currentThreadName, currentChapter, article.getTitle(),
+                                    e.getMessage(), article.getOriginalUrl()};
+                            logger.error("[{}]修复发布时间第{}篇，来源腾讯科技，标题\"{}\"，结果异常：{}, 网址：{}", logVals);
+                        }
+                    }
+                } else {
+                    Object[] logVals = {currentThreadName, currentChapter, article.getTitle()};
+                    logger.warn("[{}]修复发布时间第{}篇，来源腾讯科技，标题\"{}\"，结果：网页内容为空", logVals);
+                }
+                currentChapter++;
+            }
+            articles = articleService.selectPageByConditionNoOrder(record, paging);
+        } while (articles != null && !articles.isEmpty());
     }
 }

@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hejun.demo.service.inter.dao.defined.ArticleDao">
+    <resultMap id="BaseResultMap" type="com.hejun.demo.service.inter.domain.generation.Article">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="gmt_created" property="gmtCreated" jdbcType="TIMESTAMP"/>
+        <result column="gmt_modified" property="gmtModified" jdbcType="TIMESTAMP"/>
+        <result column="created_by" property="createdBy" jdbcType="VARCHAR"/>
+        <result column="modified_by" property="modifiedBy" jdbcType="VARCHAR"/>
+        <result column="is_del" property="isDel" jdbcType="BIT"/>
+        <result column="article_type" property="articleType" jdbcType="TINYINT"/>
+        <result column="title" property="title" jdbcType="VARCHAR"/>
+        <result column="vice_title" property="viceTitle" jdbcType="VARCHAR"/>
+        <result column="author" property="author" jdbcType="VARCHAR"/>
+        <result column="original_site_code" property="originalSiteCode" jdbcType="TINYINT"/>
+        <result column="original_site_name" property="originalSiteName" jdbcType="VARCHAR"/>
+        <result column="original_url" property="originalUrl" jdbcType="VARCHAR"/>
+        <result column="pic_url" property="picUrl" jdbcType="VARCHAR"/>
+        <result column="keywords" property="keywords" jdbcType="VARCHAR"/>
+        <result column="pub_time" property="pubTime" jdbcType="TIMESTAMP"/>
+        <result column="read_count" property="readCount" jdbcType="INTEGER"/>
+        <result column="like_count" property="likeCount" jdbcType="INTEGER"/>
+        <result column="comment_count" property="commentCount" jdbcType="INTEGER"/>
+        <result column="version" property="version" jdbcType="INTEGER"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, gmt_created, gmt_modified, created_by, modified_by, is_del, article_type, title, 
+    vice_title, author, original_site_code, original_site_name, original_url, pic_url, 
+    keywords, pub_time, read_count, like_count, comment_count, version
+  </sql>
+    <select id="selectPageByCondition" resultMap="BaseResultMap" parameterType="java.util.Map">
+        select
+        <include refid="Base_Column_List"/>
+        from article
+        <where>
+            <if test="record.isDel != null">
+                and is_del = #{record.isDel}
+            </if>
+            <if test="record.articleType != null">
+                and article_type = #{record.articleType}
+            </if>
+            <if test="record.title != null">
+                and title = #{record.title}
+            </if>
+            <if test="record.viceTitle != null">
+                and vice_title = #{record.viceTitle}
+            </if>
+            <if test="record.author != null">
+                and author = #{record.author}
+            </if>
+            <if test="record.originalSiteCode != null">
+                and original_site_code = #{record.originalSiteCode}
+            </if>
+            <if test="record.originalSiteName != null">
+                and original_site_name = #{record.originalSiteName}
+            </if>
+            <if test="record.originalUrl != null">
+                and original_url = #{record.originalUrl}
+            </if>
+            <if test="record.readCount != null">
+                and read_count = #{record.readCount}
+            </if>
+            <if test="record.likeCount != null">
+                and like_count = #{record.likeCount}
+            </if>
+            <if test="record.commentCount != null">
+                and comment_count = #{record.commentCount}
+            </if>
+            <if test="record.version != null">
+                and version = #{record.version}
+            </if>
+            <if test="record.hql != null">
+                and #{record.hql}
+            </if>
+        </where>
+        ORDER BY gmt_created DESC
+        <if test="paging != null and paging.start != null and paging.pageSize != null">
+            limit ${paging.start}, ${paging.pageSize}
+        </if>
+    </select>
+    <select id="selectPageByConditionNoOrder" resultMap="BaseResultMap" parameterType="java.util.Map">
+        select
+        <include refid="Base_Column_List"/>
+        from article
+        <where>
+            <if test="record.isDel != null">
+                and is_del = #{record.isDel}
+            </if>
+            <if test="record.articleType != null">
+                and article_type = #{record.articleType}
+            </if>
+            <if test="record.title != null">
+                and title = #{record.title}
+            </if>
+            <if test="record.viceTitle != null">
+                and vice_title = #{record.viceTitle}
+            </if>
+            <if test="record.author != null">
+                and author = #{record.author}
+            </if>
+            <if test="record.originalSiteCode != null">
+                and original_site_code = #{record.originalSiteCode}
+            </if>
+            <if test="record.originalSiteName != null">
+                and original_site_name = #{record.originalSiteName}
+            </if>
+            <if test="record.originalUrl != null">
+                and original_url = #{record.originalUrl}
+            </if>
+            <if test="record.readCount != null">
+                and read_count = #{record.readCount}
+            </if>
+            <if test="record.likeCount != null">
+                and like_count = #{record.likeCount}
+            </if>
+            <if test="record.commentCount != null">
+                and comment_count = #{record.commentCount}
+            </if>
+            <if test="record.version != null">
+                and version = #{record.version}
+            </if>
+            <if test="record.hql != null">
+                and <![CDATA[${record.hql}]]>
+            </if>
+        </where>
+        <if test="paging != null and paging.start != null and paging.pageSize != null">
+            limit ${paging.start}, ${paging.pageSize}
+        </if>
+    </select>
+    <select id="countByCondition" parameterType="java.util.Map" resultType="java.lang.Integer">
+        select count(*) from article
+        <where>
+            <if test="record.isDel != null">
+                and is_del = #{record.isDel}
+            </if>
+            <if test="record.articleType != null">
+                and article_type = #{record.articleType}
+            </if>
+            <if test="record.title != null">
+                and title = #{record.title}
+            </if>
+            <if test="record.viceTitle != null">
+                and vice_title = #{record.viceTitle}
+            </if>
+            <if test="record.author != null">
+                and author = #{record.author}
+            </if>
+            <if test="record.originalSiteCode != null">
+                and original_site_code = #{record.originalSiteCode}
+            </if>
+            <if test="record.originalSiteName != null">
+                and original_site_name = #{record.originalSiteName}
+            </if>
+            <if test="record.originalUrl != null">
+                and original_url = #{record.originalUrl}
+            </if>
+            <if test="record.readCount != null">
+                and read_count = #{record.readCount}
+            </if>
+            <if test="record.likeCount != null">
+                and like_count = #{record.likeCount}
+            </if>
+            <if test="record.commentCount != null">
+                and comment_count = #{record.commentCount}
+            </if>
+            <if test="record.version != null">
+                and version = #{record.version}
+            </if>
+            <if test="record.hql != null">
+                and <![CDATA[${record.hql}]]>
+            </if>
+        </where>
+    </select>
+    <update id="updateByConditionSelective" parameterType="java.util.Map">
+        update article
+        <set>
+            <trim suffixOverrides=",">
+                <if test="record.gmtCreated != null">
+                    gmt_created = #{record.gmtCreated,jdbcType=TIMESTAMP},
+                </if>
+                <if test="record.gmtModified != null">
+                    gmt_modified = #{record.gmtModified,jdbcType=TIMESTAMP},
+                </if>
+                <if test="record.createdBy != null">
+                    created_by = #{record.createdBy,jdbcType=VARCHAR},
+                </if>
+                <if test="record.modifiedBy != null">
+                    modified_by = #{record.modifiedBy,jdbcType=VARCHAR},
+                </if>
+                <if test="record.isDel != null">
+                    is_del = #{record.isDel,jdbcType=BIT},
+                </if>
+                <if test="record.articleType != null">
+                    article_type = #{record.articleType,jdbcType=TINYINT},
+                </if>
+                <if test="record.title != null">
+                    title = #{record.title,jdbcType=VARCHAR},
+                </if>
+                <if test="record.viceTitle != null">
+                    vice_title = #{record.viceTitle,jdbcType=VARCHAR},
+                </if>
+                <if test="record.author != null">
+                    author = #{record.author,jdbcType=VARCHAR},
+                </if>
+                <if test="record.originalSiteCode != null">
+                    original_site_code = #{record.originalSiteCode,jdbcType=TINYINT},
+                </if>
+                <if test="record.originalSiteName != null">
+                    original_site_name = #{record.originalSiteName,jdbcType=VARCHAR},
+                </if>
+                <if test="record.originalUrl != null">
+                    original_url = #{record.originalUrl,jdbcType=VARCHAR},
+                </if>
+                <if test="record.picUrl != null">
+                    pic_url = #{record.picUrl,jdbcType=VARCHAR},
+                </if>
+                <if test="record.keywords != null">
+                    keywords = #{record.keywords,jdbcType=VARCHAR},
+                </if>
+                <if test="record.pubTime != null">
+                    pub_time = #{record.pubTime,jdbcType=TIMESTAMP},
+                </if>
+                <if test="record.readCount != null">
+                    read_count = #{record.readCount,jdbcType=INTEGER},
+                </if>
+                <if test="record.likeCount != null">
+                    like_count = #{record.likeCount,jdbcType=INTEGER},
+                </if>
+                <if test="record.commentCount != null">
+                    comment_count = #{record.commentCount,jdbcType=INTEGER},
+                </if>
+                <if test="record.version != null">
+                    version = #{record.version,jdbcType=INTEGER},
+                </if>
+            </trim>
+        </set>
+        <if test="example != null">
+            <where>
+                <if test="example.id != null">
+                    and id = #{example.id}
+                </if>
+                <if test="example.isDel != null">
+                    and is_del = #{example.isDel}
+                </if>
+                <if test="example.articleType != null">
+                    and article_type = #{example.articleType}
+                </if>
+                <if test="example.title != null">
+                    and title = #{example.title}
+                </if>
+                <if test="example.viceTitle != null">
+                    and vice_title = #{example.viceTitle}
+                </if>
+                <if test="example.author != null">
+                    and author = #{example.author}
+                </if>
+                <if test="example.originalSiteCode != null">
+                    and original_site_code = #{example.originalSiteCode}
+                </if>
+                <if test="example.originalSiteName != null">
+                    and original_site_name = #{example.originalSiteName}
+                </if>
+                <if test="example.originalUrl != null">
+                    and original_url = #{example.originalUrl}
+                </if>
+                <if test="example.picUrl != null">
+                    and pic_url = #{example.picUrl}
+                </if>
+                <if test="example.readCount != null">
+                    and read_count = #{example.readCount}
+                </if>
+                <if test="example.likeCount != null">
+                    and like_count = #{example.likeCount}
+                </if>
+                <if test="example.commentCount != null">
+                    and comment_count = #{example.commentCount}
+                </if>
+                <if test="example.version != null">
+                    and version = #{example.version}
+                </if>
+            </where>
+        </if>
+    </update>
+</mapper>

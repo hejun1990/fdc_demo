@@ -44,7 +44,7 @@ public class KeywordsStore implements Serializable {
     /**
      * 是否删除(0:存在;1:删除)
      */
-    private int isDel;
+    private Integer isDel;
 
     /**
      * 关键字

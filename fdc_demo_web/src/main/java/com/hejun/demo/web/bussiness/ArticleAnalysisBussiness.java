@@ -10,4 +10,9 @@ public interface ArticleAnalysisBussiness {
      * @param begin 起始页
      */
     void extractWebContent(int begin);
+
+    /**
+     * 修复发布时间为空的文章
+     */
+    void repairWebArticlePubtime(int begin);
 }
