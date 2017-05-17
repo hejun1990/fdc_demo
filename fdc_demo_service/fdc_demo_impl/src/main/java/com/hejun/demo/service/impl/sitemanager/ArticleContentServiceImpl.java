@@ -4,7 +4,6 @@ import com.hejun.demo.service.inter.dao.generation.ArticleContentMapper;
 import com.hejun.demo.service.inter.domain.generation.ArticleContent;
 import com.hejun.demo.service.inter.domain.generation.ArticleContentExample;
 import com.hejun.demo.service.inter.service.sitemanager.ArticleContentService;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;

@@ -1,10 +1,12 @@
 package com.hejun.demo.web.controller;
 
+import com.hejun.demo.service.inter.cached.JedisClusterService;
 import com.hejun.demo.web.bussiness.ArticleAnalysisBussiness;
 import com.hejun.demo.web.bussiness.WebsiteSpiderBussiness;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 
 import javax.annotation.PostConstruct;
@@ -24,14 +26,29 @@ public class StartupController {
     @Autowired
     private ArticleAnalysisBussiness articleAnalysisBussiness;
 
+    @Value("${redis_key_prefix}")
+    private String nhsRedisKeyPrefix;
+
+    @Autowired
+    private JedisClusterService jedisClusterService;
+
     private ExecutorService fixedThreadPool;
 
     @PostConstruct
     public void startUp() {
+        if (jedisClusterService.exists(nhsRedisKeyPrefix + "_name", 1)) {
+            String name = jedisClusterService.get(nhsRedisKeyPrefix + "_name", 1);
+            logger.info("get redis name : {}", name);
+        } else {
+            String name = "hejun";
+            jedisClusterService.set(nhsRedisKeyPrefix + "_name", name, 1);
+            jedisClusterService.expire(nhsRedisKeyPrefix + "_name", 60, 1);
+            logger.info("set redis name : {}", name);
+        }
         fixedThreadPool = Executors.newFixedThreadPool(10);
 //        webSpider();
 //        webArticleAnalysis();
-        repairWebArticlePubtime();
+//        repairWebArticlePubtime();
     }
 
     private void webSpider() {

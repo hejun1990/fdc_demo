@@ -111,6 +111,11 @@
             <groupId>cn.edu.hfut.dmic.webcollector</groupId>
             <artifactId>WebCollector</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+        </dependency>
     </dependencies>
 
     <profiles>

@@ -24,5 +24,21 @@
 
     <bean id="loginCheckFilter" class="com.hejun.demo.web.filter.LoginCheckFilter"></bean>
 
+    <!-- 定义环境变量文件 -->
+    <bean id="propertyHolder" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE"/>
+        <property name="ignoreResourceNotFound" value="true"/>
+        <property name="locations">
+            <list>
+                <value>classpath*:/config.properties</value>
+            </list>
+        </property>
+    </bean>
+
+    <!-- 设置使用注解的类所在的jar包 -->
+    <context:component-scan base-package="com.hejun.demo.service.inter.cached">
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+
     <import resource="dubbo-consumer.xml"/>
 </beans>

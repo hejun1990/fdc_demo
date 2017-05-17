@@ -3,8 +3,6 @@ package com.hejun.demo.service.inter.service.sitemanager;
 import com.hejun.demo.service.inter.domain.defined.Paging;
 import com.hejun.demo.service.inter.domain.generation.Article;
 import com.hejun.demo.service.inter.domain.generation.ArticleExample;
-import com.hejun.demo.service.inter.domain.generation.WebsiteSpider;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -23,13 +21,13 @@ public interface ArticleService {
 
     boolean updateByPrimaryKeySelective(Article record);
 
-    int countByCondition(@Param("record") Map<String, Object> record);
+    int countByCondition(Map<String, Object> record);
 
-    List<Article> selectPageByCondition(@Param("record") Map<String, Object> record, @Param("paging") Paging paging);
+    List<Article> selectPageByCondition(Map<String, Object> record, Paging paging);
 
-    boolean updateByConditionSelective(@Param("record") Article record, @Param("example") Article example);
+    boolean updateByConditionSelective(Article record, Article example);
 
-    List<Article> selectPageByConditionNoOrder(@Param("record") Map<String, Object> record, @Param("paging") Paging paging);
+    List<Article> selectPageByConditionNoOrder(Map<String, Object> record, Paging paging);
 
     boolean repairWebArticlePubtime(Article article);
 }

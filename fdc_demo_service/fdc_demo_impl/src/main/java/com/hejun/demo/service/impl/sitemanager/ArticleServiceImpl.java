@@ -8,7 +8,6 @@ import com.hejun.demo.service.inter.domain.generation.Article;
 import com.hejun.demo.service.inter.domain.generation.ArticleExample;
 import com.hejun.demo.service.inter.domain.generation.WebsiteSpider;
 import com.hejun.demo.service.inter.service.sitemanager.ArticleService;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,22 +55,22 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public int countByCondition(@Param("record") Map<String, Object> record) {
+    public int countByCondition(Map<String, Object> record) {
         return articleDao.countByCondition(record);
     }
 
     @Override
-    public List<Article> selectPageByCondition(@Param("record") Map<String, Object> record, @Param("paging") Paging paging) {
+    public List<Article> selectPageByCondition(Map<String, Object> record, Paging paging) {
         return articleDao.selectPageByCondition(record, paging);
     }
 
     @Override
-    public boolean updateByConditionSelective(@Param("record") Article record, @Param("example") Article example) {
+    public boolean updateByConditionSelective(Article record, Article example) {
         return articleDao.updateByConditionSelective(record, example) > 0;
     }
 
     @Override
-    public List<Article> selectPageByConditionNoOrder(@Param("record") Map<String, Object> record, @Param("paging") Paging paging) {
+    public List<Article> selectPageByConditionNoOrder(Map<String, Object> record, Paging paging) {
         return articleDao.selectPageByConditionNoOrder(record, paging);
     }
 
@@ -94,7 +93,7 @@ public class ArticleServiceImpl implements ArticleService {
         Map<String, Object> recordMap = new HashMap<>();
         recordMap.put("originalUrl", article.getOriginalUrl());
         List<WebsiteSpider> websiteSpiders = websiteSpiderDao.selectPageByConditionNoOrder(recordMap, null);
-        if(websiteSpiders != null && !websiteSpiders.isEmpty()) {
+        if (websiteSpiders != null && !websiteSpiders.isEmpty()) {
             WebsiteSpider websiteSpider = websiteSpiders.get(0);
             spiderRecord.setPubTime(article.getPubTime());
             spiderRecord.setVersion(websiteSpider.getVersion() + 1);

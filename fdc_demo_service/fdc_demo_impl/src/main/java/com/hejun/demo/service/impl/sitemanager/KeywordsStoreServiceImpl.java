@@ -5,7 +5,6 @@ import com.hejun.demo.service.inter.dao.generation.KeywordsStoreMapper;
 import com.hejun.demo.service.inter.domain.defined.Paging;
 import com.hejun.demo.service.inter.domain.generation.KeywordsStore;
 import com.hejun.demo.service.inter.service.sitemanager.KeywordsStoreService;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -31,7 +30,7 @@ public class KeywordsStoreServiceImpl implements KeywordsStoreService {
     }
 
     @Override
-    public boolean updateByPrimaryKeySelective(@Param("record") KeywordsStore record) {
+    public boolean updateByPrimaryKeySelective(KeywordsStore record) {
         return keywordsStoreMapper.updateByPrimaryKeySelective(record) > 0;
     }
 

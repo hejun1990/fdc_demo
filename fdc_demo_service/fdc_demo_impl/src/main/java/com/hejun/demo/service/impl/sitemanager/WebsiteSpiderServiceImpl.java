@@ -7,7 +7,6 @@ import com.hejun.demo.service.inter.domain.defined.Paging;
 import com.hejun.demo.service.inter.domain.generation.*;
 import com.hejun.demo.service.inter.service.sitemanager.WebsiteSpiderService;
 import org.apache.commons.lang.StringUtils;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,7 +61,7 @@ public class WebsiteSpiderServiceImpl implements WebsiteSpiderService {
     }
 
     @Override
-    public boolean updateByPrimaryKeySelective(@Param("record") WebsiteSpider record) {
+    public boolean updateByPrimaryKeySelective(WebsiteSpider record) {
         return websiteSpiderMapper.updateByPrimaryKeySelective(record) > 0;
     }
 
