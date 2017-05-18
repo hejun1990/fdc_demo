@@ -1,6 +1,6 @@
 package com.hejun.demo.web.controller;
 
-import com.hejun.demo.service.inter.cached.JedisClusterService;
+import com.hejun.demo.service.inter.rocketmq.RMQProducer;
 import com.hejun.demo.web.bussiness.ArticleAnalysisBussiness;
 import com.hejun.demo.web.bussiness.WebsiteSpiderBussiness;
 import org.slf4j.Logger;
@@ -11,7 +11,6 @@ import org.springframework.stereotype.Controller;
 
 import javax.annotation.PostConstruct;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * Created by hejun-FDC on 2017/4/10.
@@ -29,28 +28,26 @@ public class StartupController {
     @Value("${redis_key_prefix}")
     private String nhsRedisKeyPrefix;
 
+//    @Autowired
+//    private JedisClusterService jedisClusterService;
+
     @Autowired
-    private JedisClusterService jedisClusterService;
+    private RMQProducer rmqProducer;
 
     private ExecutorService fixedThreadPool;
 
     @PostConstruct
     public void startUp() {
-        if (jedisClusterService.exists(nhsRedisKeyPrefix + "_name", 1)) {
-            String name = jedisClusterService.get(nhsRedisKeyPrefix + "_name", 1);
-            logger.info("get redis name : {}", name);
-        } else {
-            String name = "hejun";
-            jedisClusterService.set(nhsRedisKeyPrefix + "_name", name, 1);
-            jedisClusterService.expire(nhsRedisKeyPrefix + "_name", 60, 1);
-            logger.info("set redis name : {}", name);
-        }
-        fixedThreadPool = Executors.newFixedThreadPool(10);
+        testRocketMQ();
+//        fixedThreadPool = Executors.newFixedThreadPool(10);
 //        webSpider();
 //        webArticleAnalysis();
 //        repairWebArticlePubtime();
     }
 
+    /**
+     * 新闻爬虫
+     */
     private void webSpider() {
         logger.info("开启网络爬虫");
         fixedThreadPool.execute(new Runnable() {
@@ -83,6 +80,9 @@ public class StartupController {
         });
     }
 
+    /**
+     * 文章链接解析
+     */
     private void webArticleAnalysis() {
         logger.info("开始对爬取网页进行正文解析");
         fixedThreadPool.execute(new Runnable() {
@@ -105,6 +105,9 @@ public class StartupController {
         });
     }
 
+    /**
+     * 修补文章发布时间
+     */
     private void repairWebArticlePubtime() {
         fixedThreadPool.execute(new Runnable() {
             @Override
@@ -124,5 +127,24 @@ public class StartupController {
                 articleAnalysisBussiness.repairWebArticlePubtime(3);
             }
         });
+    }
+
+    /**
+     * 测试redis
+     */
+    private void testRedis() {
+//        if (jedisClusterService.exists(nhsRedisKeyPrefix + "_name", 1)) {
+//            String name = jedisClusterService.get(nhsRedisKeyPrefix + "_name", 1);
+//            logger.info("get redis name : {}", name);
+//        } else {
+//            String name = "hejun";
+//            jedisClusterService.set(nhsRedisKeyPrefix + "_name", name, 1);
+//            jedisClusterService.expire(nhsRedisKeyPrefix + "_name", 60, 1);
+//            logger.info("set redis name : {}", name);
+//        }
+    }
+
+    private void testRocketMQ() {
+        rmqProducer.sendMsg("TestRocketMQ", "testContent", "Hello RocketMQ");
     }
 }
