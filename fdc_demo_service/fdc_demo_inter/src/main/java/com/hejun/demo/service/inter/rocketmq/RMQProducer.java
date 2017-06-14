@@ -28,9 +28,11 @@ public class RMQProducer implements InitializingBean {
     @Value("${mq.tags}")
     private String tags;
 
-    private DefaultMQProducer producer = new DefaultMQProducer("MQProducer");
+    private DefaultMQProducer producer;
 
+    @Override
     public void afterPropertiesSet() throws Exception {
+        this.producer = new DefaultMQProducer("MQProducer");
         this.producer.setNamesrvAddr(this.ip);
         this.producer.setMaxMessageSize(this.maxBodySize.intValue());
         this.producer.start();

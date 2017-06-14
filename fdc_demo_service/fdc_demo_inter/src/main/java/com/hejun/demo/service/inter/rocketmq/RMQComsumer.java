@@ -30,12 +30,13 @@ public class RMQComsumer implements InitializingBean {
     @Value("${mq.topic}")
     private String topic;
 
+    @Override
     public void afterPropertiesSet() throws Exception {
         testRMQComsumer();
     }
 
     private void testRMQComsumer() {
-        DefaultMQPushConsumer consumer = new DefaultMQPushConsumer("MQProducer");
+        DefaultMQPushConsumer consumer = new DefaultMQPushConsumer("PushConsumer");
         consumer.setNamesrvAddr(ip);
         try {
             consumer.subscribe(topic, "TestRocketMQ");

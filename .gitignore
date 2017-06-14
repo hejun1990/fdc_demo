@@ -3,6 +3,7 @@ target/
 out/
 .idea/
 bin/
+classes/
 
 # Package Files #
 *.jar
@@ -16,3 +17,4 @@ bin/
 *.project
 *.iml
 *.jshintrc
+.gitignore
