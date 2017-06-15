@@ -9,11 +9,13 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
+
 /**
  * Created by hejun-FDC on 2017/5/18.
  */
 @Service("rmqProducer")
-public class RMQProducer implements InitializingBean {
+public class RMQProducer {
     private static final Logger logger = LoggerFactory.getLogger(RMQProducer.class);
 
     @Value("${mq.ip}")
@@ -30,8 +32,8 @@ public class RMQProducer implements InitializingBean {
 
     private DefaultMQProducer producer;
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
+    @PostConstruct
+    private void producerStart() throws Exception {
         this.producer = new DefaultMQProducer("MQProducer");
         this.producer.setNamesrvAddr(this.ip);
         this.producer.setMaxMessageSize(this.maxBodySize.intValue());

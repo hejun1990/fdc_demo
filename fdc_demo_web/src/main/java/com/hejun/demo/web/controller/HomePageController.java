@@ -61,4 +61,14 @@ public class HomePageController {
         result.put("data", data);
         return result;
     }
+
+    /**
+     * 后台管理系统首页
+     *
+     * @return vm模板页
+     */
+    @RequestMapping(value = "/backend", method = RequestMethod.GET)
+    public String home() {
+        return "backend/home";
+    }
 }

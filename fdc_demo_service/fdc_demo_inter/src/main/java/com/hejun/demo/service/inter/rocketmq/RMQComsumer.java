@@ -14,6 +14,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
@@ -21,7 +22,7 @@ import java.util.List;
  * Created by hejun-FDC on 2017/5/18.
  */
 @Service("rmqComsumer")
-public class RMQComsumer implements InitializingBean {
+public class RMQComsumer {
     private static final Logger logger = LoggerFactory.getLogger(RMQComsumer.class);
 
     @Value("${mq.ip}")
@@ -30,12 +31,8 @@ public class RMQComsumer implements InitializingBean {
     @Value("${mq.topic}")
     private String topic;
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        testRMQComsumer();
-    }
-
-    private void testRMQComsumer() {
+    @PostConstruct
+    private void comsumerStart() {
         DefaultMQPushConsumer consumer = new DefaultMQPushConsumer("PushConsumer");
         consumer.setNamesrvAddr(ip);
         try {

@@ -38,7 +38,7 @@ public class StartupController {
 
     @PostConstruct
     public void startUp() {
-        testRocketMQ();
+//        testRocketMQ();
 //        fixedThreadPool = Executors.newFixedThreadPool(10);
 //        webSpider();
 //        webArticleAnalysis();
