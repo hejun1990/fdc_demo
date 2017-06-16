@@ -10,24 +10,27 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisSentinelPool;
 import redis.clients.jedis.exceptions.JedisException;
 
+import javax.annotation.PostConstruct;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by hejun-FDC on 2017/5/12.
  */
 @Service("jedisClusterService")
-public class JedisClusterService implements InitializingBean {
+public class JedisClusterService {
     private static final Logger logger = LoggerFactory.getLogger(JedisClusterService.class);
 
-    @Value("${redisAddress}")
-    private String redisAddress;
+    @Value("${sentinelAddress}")
+    private String sentinelAddress;
     private JedisSentinelPool jedisSentinelPool;
     private String sentinelName = "mymaster";
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
+
+    @PostConstruct
+    private void initMethod() {
         GenericObjectPoolConfig genericObjectPoolConfig = new GenericObjectPoolConfig();
         genericObjectPoolConfig.setMaxTotal(200);
         genericObjectPoolConfig.setMaxWaitMillis(5000L);
@@ -36,12 +39,11 @@ public class JedisClusterService implements InitializingBean {
         genericObjectPoolConfig.setMinEvictableIdleTimeMillis(600000L);
         genericObjectPoolConfig.setTimeBetweenEvictionRunsMillis(300000L);
         genericObjectPoolConfig.setTestOnBorrow(true);
-        HashSet<String> addressSet = new HashSet<>();
-        String[] addresses = this.redisAddress.split(";");
+        Set<String> addressSet = new HashSet<>();
+        String[] addresses = this.sentinelAddress.split(";");
         for (String address : addresses) {
             addressSet.add(address);
         }
-
         this.jedisSentinelPool = new JedisSentinelPool(this.sentinelName, addressSet, genericObjectPoolConfig);
     }
 

@@ -1,5 +1,6 @@
 package com.hejun.demo.web.controller;
 
+import com.hejun.demo.service.inter.cached.JedisClusterService;
 import com.hejun.demo.service.inter.rocketmq.RMQProducer;
 import com.hejun.demo.web.bussiness.ArticleAnalysisBussiness;
 import com.hejun.demo.web.bussiness.WebsiteSpiderBussiness;
@@ -28,8 +29,8 @@ public class StartupController {
     @Value("${redis_key_prefix}")
     private String nhsRedisKeyPrefix;
 
-//    @Autowired
-//    private JedisClusterService jedisClusterService;
+    @Autowired
+    private JedisClusterService jedisClusterService;
 
     @Autowired
     private RMQProducer rmqProducer;
@@ -38,7 +39,8 @@ public class StartupController {
 
     @PostConstruct
     public void startUp() {
-//        testRocketMQ();
+        testRedis();
+        testRocketMQ();
 //        fixedThreadPool = Executors.newFixedThreadPool(10);
 //        webSpider();
 //        webArticleAnalysis();
@@ -133,15 +135,15 @@ public class StartupController {
      * 测试redis
      */
     private void testRedis() {
-//        if (jedisClusterService.exists(nhsRedisKeyPrefix + "_name", 1)) {
-//            String name = jedisClusterService.get(nhsRedisKeyPrefix + "_name", 1);
-//            logger.info("get redis name : {}", name);
-//        } else {
-//            String name = "hejun";
-//            jedisClusterService.set(nhsRedisKeyPrefix + "_name", name, 1);
-//            jedisClusterService.expire(nhsRedisKeyPrefix + "_name", 60, 1);
-//            logger.info("set redis name : {}", name);
-//        }
+        if (jedisClusterService.exists(nhsRedisKeyPrefix + "_name", 1)) {
+            String name = jedisClusterService.get(nhsRedisKeyPrefix + "_name", 1);
+            logger.info("get redis name : {}", name);
+        } else {
+            String name = "hejun";
+            jedisClusterService.set(nhsRedisKeyPrefix + "_name", name, 1);
+            jedisClusterService.expire(nhsRedisKeyPrefix + "_name", 60, 1);
+            logger.info("set redis name : {}", name);
+        }
     }
 
     private void testRocketMQ() {

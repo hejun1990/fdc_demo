@@ -1,10 +1,12 @@
 package com.hejun.demo.web.controller;
 
+import com.hejun.demo.service.inter.cached.JedisClusterService;
 import com.hejun.demo.service.inter.domain.generation.Article;
 import com.hejun.demo.web.bussiness.ArticleBussiness;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +22,12 @@ import java.util.Map;
 @Controller
 public class HomePageController {
     private static Logger logger = LoggerFactory.getLogger(HomePageController.class);
+
+    @Value("${redis_key_prefix}")
+    private String nhsRedisKeyPrefix;
+
+    @Autowired
+    private JedisClusterService jedisClusterService;
 
     @Autowired
     private ArticleBussiness articleBussiness;
@@ -69,6 +77,12 @@ public class HomePageController {
      */
     @RequestMapping(value = "/backend", method = RequestMethod.GET)
     public String home() {
+        if (jedisClusterService.exists(nhsRedisKeyPrefix + "_name", 1)) {
+            String name = jedisClusterService.get(nhsRedisKeyPrefix + "_name", 1);
+            logger.info("get redis name : {}", name);
+        } else {
+            logger.info("get redis name : 空");
+        }
         return "backend/home";
     }
 }
